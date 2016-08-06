@@ -1,6 +1,6 @@
 package com.terradatum.jenkins.workflow
 
-class Version implements Serializable {
+class Version {
   int major, minor, patch
   String buildMetadata
 
