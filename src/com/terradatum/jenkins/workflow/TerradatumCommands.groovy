@@ -103,13 +103,14 @@ def mvn(String args) {
  */
 // read full text from file
 @NonCPS
-def String getStringInFile(String path) {
-  new File(path).text
+static def String getStringInFile(String path) {
+  def file = new File(path)
+  file.exists() ? file.text : ''
 }
 
 // overwrite file with text
 @NonCPS
-def void setStringInFile(String path, String value) {
+static def void setStringInFile(String path, String value) {
   new File(path).newWriter().withWriter { w ->
     w << value
   }
