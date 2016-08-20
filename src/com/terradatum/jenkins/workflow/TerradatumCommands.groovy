@@ -1,7 +1,8 @@
 #!/usr/bin/env groovy
 package com.terradatum.jenkins.workflow
 
-@Grab('com.github.zafarkhaja:java-semver:0.9.0')
+@GrabResolver(name='nexus', root='https://nexus.terradatum.com/content/groups/public/')
+@Grab('com.github.zafarkhaja:java-semver:0.10-SNAPSHOT')
 
 import com.cloudbees.groovy.cps.NonCPS
 import com.github.zafarkhaja.semver.Version
