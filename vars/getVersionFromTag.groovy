@@ -29,7 +29,7 @@ def call(body) {
 
   def semver = Version.valueOf(tag)
   def newVersion = version
-  if (newVersion.lessThan(semver)) {
+  if (newVersion.BUILD_AWARE_ORDER.lessThan(semver)) {
     newVersion = semver
   }
   echo "New version is ${newVersion}"

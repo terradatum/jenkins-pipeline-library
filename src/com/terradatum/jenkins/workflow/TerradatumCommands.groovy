@@ -32,14 +32,21 @@ static def String getPathFromJenkinsFullName(String fullName) {
  */
 
 // blocking call to get version, increment, and return
-def Version incrementPatchVersion(String jenkinsFullName) {
-  def version = Version.valueOf('0.0.1')
+def Version incrementPatchVersion(String jenkinsFullName, Version version = null) {
   def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/nextVersion"
+  def nextVersion = Version.valueOf('0.0.1')
   lock("${jenkinsFullName}/nextVersion") {
-    version = Version.valueOf(getStringInFile(path))
-    setStringInFile(path, version.incrementPatchVersion().toString())
+    def persistedVersion = Version.valueOf(getStringInFile(path))
+    if (version && persistedVersion && version.BUILD_AWARE_ORDER.lessThan(persistedVersion)) {
+      nextVersion = persistedVersion
+    } else if (version) {
+      nextVersion = version
+    } else if (persistedVersion) {
+      nextVersion = persistedVersion
+    }
+    setStringInFile(path, nextVersion.incrementPatchVersion().toString())
   }
-  version
+  nextVersion
 }
 
 // This method sets up the Maven and JDK tools, puts them in the environment along
