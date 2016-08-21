@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+import com.github.zafarkhaja.semver.Version
 import com.terradatum.jenkins.workflow.TerradatumCommands
 
 /**
@@ -12,5 +13,5 @@ def call(body) {
   body()
 
   def flow = new TerradatumCommands()
-  flow.incrementPatchVersion(config.project as String)
+  flow.incrementPatchVersion(config.project as String, config.version as Version)
 }
