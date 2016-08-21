@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/jenkins-workflow-libs.iml" filepath="$PROJECT_DIR$/jenkins-workflow-libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/jenkins-workflow-libs.iml" filepath="$PROJECT_DIR$/.idea/jenkins-workflow-libs.iml" />
     </modules>
   </component>
 </project>

@@ -14,7 +14,7 @@ import jenkins.model.Jenkins
  * When working on this script using IntelliJ, you'll want to run the following
  * commands from the command line:
  * 1. mvn dependency:get -Dartifact=com.cloudbees:groovy-cps:1.9
- * 2. mvn dependency:get -Dartifact=com.github.zafarkhaja:java-semver:0.9.0
+ * 2. mvn dependency:get -Dartifact=com.github.zafarkhaja:java-semver:0.10-SNAPSHOT
  * 3. mvn dependency:get -Dartifact=org.6wind.jenkins:lockable-resources:1.10
  * 4. mvn dependency:get -Dartifact=org.jenkins-ci.plugins.workflow:workflow-api:2.1
  */

@@ -8,6 +8,7 @@ def call(body) {
   body.resolveStrategy = Closure.DELEGATE_FIRST
   body.delegate = config
   body()
+
   sh 'git config user.email sysadmin@terradatum.com'
   sh 'git config user.name terradatum-automation'
   sh "git remote set-url origin git@github.com:${config.project}"
