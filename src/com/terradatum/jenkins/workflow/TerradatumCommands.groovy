@@ -38,7 +38,7 @@ def Version incrementPatchVersion(String jenkinsFullName, Version version = null
   lock("${jenkinsFullName}/nextVersion") {
     def versionString = getStringInFile(path)
     def persistedVersion = versionString ? Version.valueOf(versionString) : nextVersion
-    if (version && persistedVersion && version.BUILD_AWARE_ORDER.lessThan(persistedVersion)) {
+    if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
       nextVersion = persistedVersion
     } else if (version) {
       nextVersion = version
@@ -55,7 +55,7 @@ def Version incrementPatchVersion(String jenkinsFullName, Version version = null
 // body we passed in within that environment.
 // TODO: wire this up for other project types.
 def getProjectVersionString(ProjectType projectType) {
-  def versionString
+  def versionString = '0.0.1'
   switch (projectType) {
     case ProjectType.Maven:
       pom = readMavenPom file: 'pom.xml'
