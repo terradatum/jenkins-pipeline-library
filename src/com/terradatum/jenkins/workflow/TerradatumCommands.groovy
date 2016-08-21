@@ -2,7 +2,7 @@
 package com.terradatum.jenkins.workflow
 
 @GrabResolver(name='nexus', root='https://nexus.terradatum.com/content/groups/public/')
-@Grab('com.github.zafarkhaja:java-semver:0.10.0')
+@Grab('com.github.zafarkhaja:java-semver:0.10-SNAPSHOT')
 
 import com.cloudbees.groovy.cps.NonCPS
 import com.github.zafarkhaja.semver.Version
@@ -36,7 +36,8 @@ def Version incrementPatchVersion(String jenkinsFullName, Version version = null
   def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/nextVersion"
   def nextVersion = Version.valueOf('0.0.1')
   lock("${jenkinsFullName}/nextVersion") {
-    def persistedVersion = Version.valueOf(getStringInFile(path))
+    def versionString = getStringInFile(path)
+    def persistedVersion = versionString ? Version.valueOf(versionString) : nextVersion
     if (version && persistedVersion && version.BUILD_AWARE_ORDER.lessThan(persistedVersion)) {
       nextVersion = persistedVersion
     } else if (version) {
