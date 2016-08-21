@@ -2,7 +2,7 @@
 package com.terradatum.jenkins.workflow
 
 @GrabResolver(name='nexus', root='https://nexus.terradatum.com/content/groups/public/')
-@Grab('com.github.zafarkhaja:java-semver:0.10-SNAPSHOT')
+@Grab('com.github.zafarkhaja:java-semver:0.10.0')
 
 import com.cloudbees.groovy.cps.NonCPS
 import com.github.zafarkhaja.semver.Version
