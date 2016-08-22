@@ -110,7 +110,7 @@ class Version implements Serializable {
 
   @Override
   boolean equals(Object other) {
-    return delegate == other
+    return delegate == (other as Version).delegate
   }
 
   @Override
