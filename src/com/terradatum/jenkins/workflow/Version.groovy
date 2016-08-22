@@ -108,14 +108,17 @@ class Version implements Serializable {
     return delegate.lessThanOrEqualTo(other.delegate)
   }
 
+  @Override
   boolean equals(Object other) {
     return delegate == other
   }
 
+  @Override
   int hashCode() {
     return delegate.hashCode()
   }
 
+  @Override
   String toString() {
     return delegate.toString()
   }
