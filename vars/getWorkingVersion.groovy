@@ -15,15 +15,15 @@ def call(body) {
 
   def flow = new TerradatumCommands()
   def projectVersion = flow.getProjectVersionString(config.projectType as ProjectType).tokenize('.')
+
   def major = projectVersion[0];
   def minor = projectVersion[1];
-
-  int patch = env.BUILD_NUMBER
+  def patch = env.BUILD_NUMBER
 
   sh 'git rev-parse --short HEAD > commit'
   def commit = readFile('commit').trim()
 
-  Version workingVersion = Version.valueOf("${major}.${minor}.${patch}") as Version
+  def workingVersion = Version.valueOf("${major}.${minor}.${patch}")
   workingVersion.buildMetadata = commit;
   if (fromTag) {
     //noinspection GroovyAssignabilityCheck

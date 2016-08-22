@@ -19,10 +19,6 @@ class Version {
     delegate = com.github.zafarkhaja.semver.Version.valueOf(versionString)
   }
 
-  com.github.zafarkhaja.semver.Version getDelegate() {
-    return delegate
-  }
-
   void setDelegate(com.github.zafarkhaja.semver.Version version) {
     this.delegate = version
   }
