@@ -1,11 +1,7 @@
 #!/usr/bin/env groovy
 package com.terradatum.jenkins.workflow
 
-@GrabResolver(name='nexus', root='https://nexus.terradatum.com/content/groups/public/')
-@Grab('com.github.zafarkhaja:java-semver:0.10-SNAPSHOT')
-
 import com.cloudbees.groovy.cps.NonCPS
-import com.github.zafarkhaja.semver.Version
 import jenkins.model.Jenkins
 
 /**
@@ -37,7 +33,7 @@ def Version incrementPatchVersion(String jenkinsFullName, Version version = null
   def nextVersion = Version.valueOf('0.0.1')
   lock("${jenkinsFullName}/nextVersion") {
     def versionString = getStringInFile(path)
-    def persistedVersion = versionString ? Version.valueOf(versionString) : nextVersion
+    Version persistedVersion = versionString ? Version.valueOf(versionString) : nextVersion
     if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
       nextVersion = persistedVersion
     } else if (version) {
@@ -47,7 +43,7 @@ def Version incrementPatchVersion(String jenkinsFullName, Version version = null
     }
     setStringInFile(path, nextVersion.incrementPatchVersion().toString())
   }
-  nextVersion
+  nextVersion as Version
 }
 
 // This method sets up the Maven and JDK tools, puts them in the environment along

@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-import com.github.zafarkhaja.semver.Version
+import com.terradatum.jenkins.workflow.Version
 
 /**
  * Created by rbellamy on 8/19/16.
@@ -29,7 +29,7 @@ def call(body) {
 
   def semver = Version.valueOf(tag)
   def newVersion = version
-  if (newVersion.BUILD_AWARE_ORDER.lessThan(semver)) {
+  if (newVersion.compareWithBuildsTo(semver) < 0) {
     newVersion = semver
   }
   echo "New version is ${newVersion}"
