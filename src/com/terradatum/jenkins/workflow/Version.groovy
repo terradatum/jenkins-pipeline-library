@@ -1,5 +1,7 @@
 package com.terradatum.jenkins.workflow
 
+import com.cloudbees.groovy.cps.NonCPS
+
 @GrabResolver(name='nexus', root='https://nexus.terradatum.com/content/groups/public/')
 @Grab('com.github.zafarkhaja:java-semver:0.10-SNAPSHOT')
 
@@ -109,16 +111,19 @@ class Version implements Serializable {
   }
 
   @Override
+  @NonCPS
   boolean equals(Object other) {
     return delegate == (other as Version).delegate
   }
 
   @Override
+  @NonCPS
   int hashCode() {
     return delegate.hashCode()
   }
 
   @Override
+  @NonCPS
   String toString() {
     return delegate.toString()
   }
