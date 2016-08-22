@@ -7,8 +7,9 @@ package com.terradatum.jenkins.workflow
  * @author rbellamy@terradatum.com 
  * @date 8/21/16
  */
-class Version {
+class Version implements Serializable {
 
+  private static final long serialVersionUID = -2008891377046871665L;
   com.github.zafarkhaja.semver.Version delegate;
 
   private def Version(com.github.zafarkhaja.semver.Version version) {
