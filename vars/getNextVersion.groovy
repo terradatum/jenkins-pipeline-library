@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 import com.terradatum.jenkins.workflow.TerradatumCommands
 import com.terradatum.jenkins.workflow.Version
-
+import com.terradatum.jenkins.workflow.VersionSegment
 /**
  * Created by rbellamy on 8/19/16.
  */
@@ -12,6 +12,10 @@ def call(body) {
   body.delegate = config
   body()
 
+  String project = config.project
+  VersionSegment versionSegment = config.versionSegment
+  Version version = config.version
+
   def flow = new TerradatumCommands()
-  flow.incrementPatchVersion(config.project as String, config.version as Version)
+  flow.incrementVersion project, versionSegment, version
 }

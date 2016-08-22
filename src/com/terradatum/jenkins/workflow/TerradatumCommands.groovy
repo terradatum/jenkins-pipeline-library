@@ -28,20 +28,33 @@ static def String getPathFromJenkinsFullName(String fullName) {
  */
 
 // blocking call to get version, increment, and return
-def Version incrementPatchVersion(String jenkinsFullName, Version version = null) {
-  def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/nextVersion"
-  def nextVersion = Version.valueOf('0.0.1')
-  lock("${jenkinsFullName}/nextVersion") {
+// persists current version in "${path to Jenkins full name}/currentVersion" file
+def Version incrementVersion(String jenkinsFullName, VersionSegment versionSegment, Version version = null) {
+  def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/currentVersion"
+  def currentVersion = Version.valueOf('0.0.1')
+  def nextVersion = currentVersion
+  lock("${jenkinsFullName}/currentVersion") {
     def versionString = getStringInFile(path)
-    def persistedVersion = versionString ? Version.valueOf(versionString) : nextVersion
+    def persistedVersion = versionString ? Version.valueOf(versionString) : currentVersion
     if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
-      nextVersion = persistedVersion
+      currentVersion = persistedVersion
     } else if (version) {
-      nextVersion = version
+      currentVersion = version
     } else if (persistedVersion) {
-      nextVersion = persistedVersion
+      currentVersion = persistedVersion
     }
-    setStringInFile(path, nextVersion.incrementPatchVersion().toString())
+    switch (versionSegment) {
+      case VersionSegment.Major:
+        nextVersion = currentVersion.incrementMajorVersion()
+        break
+      case VersionSegment.Minor:
+        nextVersion = currentVersion.incrementMinorVersion()
+        break
+      case VersionSegment.Patch:
+        nextVersion = currentVersion.incrementPatchVersion()
+        break
+    }
+    setStringInFile(path, nextVersion.toString())
   }
   nextVersion
 }
