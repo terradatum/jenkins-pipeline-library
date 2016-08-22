@@ -4,6 +4,8 @@ import com.terradatum.jenkins.workflow.Version
 import com.terradatum.jenkins.workflow.VersionType
 /**
  * Created by rbellamy on 8/19/16.
+ *
+ * Gets the next version number, whether Major, Minor or Patch. Persists the version at the project.
  */
 def call(body) {
   // evaluate the body block, and collect configuration into the object
@@ -12,10 +14,11 @@ def call(body) {
   body.delegate = config
   body()
 
-  String project = config.project
-  VersionType versionType = config.versionType
+  def flow = new TerradatumCommands()
+
+  String jenkinsFullName = config.jenkinsFullName
+  VersionType type = config.versionType
   Version version = config.version
 
-  def flow = new TerradatumCommands()
-  flow.incrementVersion project, versionType, version
+  return flow.incrementVersion(jenkinsFullName, type, version)
 }

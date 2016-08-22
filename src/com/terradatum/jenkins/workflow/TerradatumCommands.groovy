@@ -29,6 +29,7 @@ static def String getPathFromJenkinsFullName(String fullName) {
 
 // blocking call to get version, increment, and return
 // persists current version in "${path to Jenkins full name}/currentVersion" file
+// if a version is passed in, then it overrides the persisted version and becomes the new version
 def Version incrementVersion(String jenkinsFullName, VersionType versionType, Version version = null) {
   def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/currentVersion"
   def currentVersion = Version.valueOf('0.0.1')
@@ -36,9 +37,7 @@ def Version incrementVersion(String jenkinsFullName, VersionType versionType, Ve
   lock("${jenkinsFullName}/currentVersion") {
     def versionString = getStringInFile(path)
     def persistedVersion = versionString ? Version.valueOf(versionString) : currentVersion
-    if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
-      currentVersion = persistedVersion
-    } else if (version) {
+    if (version) {
       currentVersion = version
     } else if (persistedVersion) {
       currentVersion = persistedVersion
@@ -77,23 +76,12 @@ def getProjectVersionString(ProjectType projectType) {
  * Maven commands
  */
 
-def String mvnArgs(Version version = null, args) {
-  if (version) {
-    if (version.buildMetadata) {
-      return "-Drevision=\"${version.patchVersion}+${version.buildMetadata}\" ${args}"
-    } else {
-      return "-Drevision=\"${version.patchVersion}\" ${args}"
-    }
-  }
-  return args
-}
-
 def mvn(String args) {
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
     // See below for what this method does - we're passing an arbitrary environment
     // variable to it so that JAVA_OPTS and MAVEN_OPTS are set correctly.
-    withMavenEnv() {
+    withMavenEnv {
       envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "MAVEN_OPTS=-Xmx1536m -Xms512m"]
       maven = 'maven-3.3.9'
       jdk = "jdk-1.${env.JRE_MAJOR}.0_${env.JRE_UPDATE}"
@@ -106,6 +94,17 @@ def mvn(String args) {
       }
     }
   }
+}
+
+def String mvnArgs(Version version = null, args) {
+  if (version) {
+    if (version.buildMetadata) {
+      return "-Drevision=\"${version.patchVersion}+${version.buildMetadata}\" ${args}"
+    } else {
+      return "-Drevision=\"${version.patchVersion}\" ${args}"
+    }
+  }
+  return args
 }
 
 /*

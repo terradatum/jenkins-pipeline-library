@@ -1,10 +1,11 @@
 #!/usr/bin/env groovy
-import com.terradatum.jenkins.workflow.ProjectType
-import com.terradatum.jenkins.workflow.TerradatumCommands
-import com.terradatum.jenkins.workflow.Version
-
+import com.terradatum.jenkins.workflow.*
 /**
  * Created by rbellamy on 8/19/16.
+ *
+ * Gets the version as defined in a project file, with the Patch version set to env.BUILD_NUMBER.
+ *
+ * TODO: currently only supports pom.xml, needs to support packages.json, build.sbt, etc.
  */
 def call(body) {
   // evaluate the body block, and collect configuration into the object
@@ -14,28 +15,34 @@ def call(body) {
   body()
 
   def flow = new TerradatumCommands()
-  def projectVersion = flow.getProjectVersionString(config.projectType as ProjectType).tokenize('.')
+
+  ProjectType projectType = config.projectType
+  boolean fromTag = config.fromTag ?: false
+
+  def projectVersion = flow.getProjectVersionString(projectType).tokenize('.')
 
   def major = projectVersion[0];
   def minor = projectVersion[1];
   def patch = env.BUILD_NUMBER
 
-  sh 'git rev-parse --short HEAD > commit'
-  def commit = readFile('commit').trim()
+  Version workingVersion = Version.valueOf("${major}.${minor}.${patch}")
 
-  def workingVersion = Version.valueOf("${major}.${minor}.${patch}")
-  workingVersion.buildMetadata = commit;
   if (fromTag) {
     //noinspection GroovyAssignabilityCheck
     workingVersion = getVersionFromTag {
       version = workingVersion
     }
+  } else {
+    sh 'git rev-parse --short HEAD > commit'
+    def commit = readFile('commit').trim()
+
+    workingVersion.buildMetadata = commit;
   }
 
   if (workingVersion) {
-    echo "Building version: ${workingVersion}"
+    echo "Working version: ${workingVersion}"
   } else {
-    error 'Could not derive BrokerMetrics version'
+    error 'Could not derive version'
   }
-  workingVersion
+  return workingVersion
 }

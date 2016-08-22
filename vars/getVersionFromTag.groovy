@@ -13,10 +13,18 @@ def call(body) {
   body.delegate = config
   body()
 
-  def version = config.version ?: Version.valueOf('0.0.1')
+  Version version = config.version
 
   // if the repo has no tags this command will fail
-  sh "git tag --sort version:refname | tail -1 > version.tmp"
+  // if this command fails, and there is no config version, rethrow the error
+  try {
+    sh "git tag --sort version:refname | tail -1 > version.tmp"
+  } catch(err) {
+    echo "${err}"
+    if (!version) {
+      throw err
+    }
+  }
 
   String tag = readFile 'version.tmp'
 
@@ -27,11 +35,11 @@ def call(body) {
 
   tag = tag.trim()
 
-  def semver = Version.valueOf(tag)
-  def newVersion = version
-  if (newVersion.compareWithBuildsTo(semver) < 0) {
-    newVersion = semver
+  def semanticVersion = Version.valueOf(tag)
+  Version newVersion = version
+  if (newVersion.compareWithBuildsTo(semanticVersion) < 0) {
+    newVersion = semanticVersion
   }
-  echo "New version is ${newVersion}"
+  echo "Tagged version is ${newVersion}"
   return newVersion
 }
