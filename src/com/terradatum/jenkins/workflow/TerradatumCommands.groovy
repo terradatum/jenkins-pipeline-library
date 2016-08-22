@@ -50,7 +50,7 @@ def Version incrementVersion(String jenkinsFullName, VersionSegment versionSegme
       case VersionSegment.Minor:
         nextVersion = currentVersion.incrementMinorVersion()
         break
-      case VersionSegment.Patch:
+      default:
         nextVersion = currentVersion.incrementPatchVersion()
         break
     }
