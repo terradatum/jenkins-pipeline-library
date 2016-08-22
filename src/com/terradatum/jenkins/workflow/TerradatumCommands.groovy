@@ -29,7 +29,7 @@ static def String getPathFromJenkinsFullName(String fullName) {
 
 // blocking call to get version, increment, and return
 // persists current version in "${path to Jenkins full name}/currentVersion" file
-def Version incrementVersion(String jenkinsFullName, VersionSegment versionSegment, Version version = null) {
+def Version incrementVersion(String jenkinsFullName, VersionType versionType, Version version = null) {
   def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/currentVersion"
   def currentVersion = Version.valueOf('0.0.1')
   def nextVersion = currentVersion
@@ -43,11 +43,11 @@ def Version incrementVersion(String jenkinsFullName, VersionSegment versionSegme
     } else if (persistedVersion) {
       currentVersion = persistedVersion
     }
-    switch (versionSegment) {
-      case VersionSegment.Major:
+    switch (versionType) {
+      case VersionType.Major:
         nextVersion = currentVersion.incrementMajorVersion()
         break
-      case VersionSegment.Minor:
+      case VersionType.Minor:
         nextVersion = currentVersion.incrementMinorVersion()
         break
       default:
