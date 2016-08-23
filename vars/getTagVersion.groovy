@@ -29,7 +29,7 @@ def call(body) {
   String tag = readFile 'version.tmp'
 
   if (tag == null || tag.size() == 0){
-    echo "no existing tag found using version ${version}"
+    echo "No existing tag found. Using version: ${version}"
     return version
   }
 
@@ -40,6 +40,8 @@ def call(body) {
   if (newVersion.compareWithBuildsTo(semanticVersion) < 0) {
     newVersion = semanticVersion
   }
-  echo "Tagged version is ${newVersion}"
+
+  echo "Tagged version: ${newVersion}"
+
   return newVersion
 }

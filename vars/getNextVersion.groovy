@@ -16,9 +16,13 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
-  String jenkinsFullName = config.jenkinsFullName
+  String project = config.project
   VersionType type = config.versionType
   Version version = config.version
 
-  return flow.incrementVersion(jenkinsFullName, type, version)
+  Version nextVersion = flow.incrementVersion(project, type, version)
+
+  echo "Next version: ${nextVersion}"
+
+  return nextVersion
 }

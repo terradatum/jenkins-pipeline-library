@@ -29,15 +29,16 @@ static def String getPathFromJenkinsFullName(String fullName) {
 
 // blocking call to get version, increment, and return
 // persists current version in "${path to Jenkins full name}/currentVersion" file
-// if a version is passed in, then it overrides the persisted version and becomes the new version
-def Version incrementVersion(String jenkinsFullName, VersionType versionType, Version version = null) {
-  def path = "${getPathFromJenkinsFullName(jenkinsFullName)}/currentVersion"
+// if a version is passed in, and is greater than the persisted version, then it overrides
+// the persisted version and becomes the new version.
+def Version incrementVersion(String project, VersionType versionType, Version version = null) {
+  def path = "${getPathFromJenkinsFullName(project)}/currentVersion"
   def currentVersion = Version.valueOf('0.0.1')
   def nextVersion = currentVersion
-  lock("${jenkinsFullName}/currentVersion") {
+  lock("${project}/currentVersion") {
     def versionString = getStringInFile(path)
     def persistedVersion = versionString ? Version.valueOf(versionString) : currentVersion
-    if (version) {
+    if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
       currentVersion = version
     } else if (persistedVersion) {
       currentVersion = persistedVersion
@@ -94,17 +95,6 @@ def mvn(String args) {
       }
     }
   }
-}
-
-def String mvnArgs(Version version = null, args) {
-  if (version) {
-    if (version.buildMetadata) {
-      return "-Drevision=\"${version.patchVersion}+${version.buildMetadata}\" ${args}"
-    } else {
-      return "-Drevision=\"${version.patchVersion}\" ${args}"
-    }
-  }
-  return args
 }
 
 /*
