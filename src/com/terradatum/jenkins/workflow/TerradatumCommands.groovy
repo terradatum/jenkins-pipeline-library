@@ -38,10 +38,10 @@ def Version incrementVersion(String project, VersionType versionType, Version ve
   lock("${project}/currentVersion") {
     def versionString = getStringInFile(path)
     def persistedVersion = versionString ? Version.valueOf(versionString) : currentVersion
-    if (version && persistedVersion && version.compareWithBuildsTo(persistedVersion) < 0) {
-      currentVersion = version
-    } else if (persistedVersion) {
+    if (version && version.compareWithBuildsTo(persistedVersion) < 0) {
       currentVersion = persistedVersion
+    } else if (version) {
+      currentVersion = version
     }
     switch (versionType) {
       case VersionType.Major:
