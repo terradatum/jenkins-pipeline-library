@@ -28,7 +28,9 @@ def call(body) {
       // .repository directory at the root of the build (which it gets from the
       // pwd() Workflow call) and use that for the local Maven repository.
       mvn = {
-        sh "mvn -s ${mavenSettingsFile} -V -U -B -Dmaven.repo.local=${pwd()}/.repository ${args}"
+        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: '', variable: 'MAVEN_SETTINGS_PATH']]]) {
+          sh "mvn -s ${env.MAVEN_SETTINGS_PATH} -V -U -B -Dmaven.repo.local=${pwd()}/.repository ${args}"
+        }
       }
     }
   }
