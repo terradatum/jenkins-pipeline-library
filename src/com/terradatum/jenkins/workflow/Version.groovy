@@ -31,43 +31,53 @@ class Version implements Serializable {
   }
 
   Version incrementMajorVersion() {
-    return new Version(delegate.incrementMajorVersion())
+    delegate = delegate.incrementMajorVersion()
+    return new Version(delegate)
   }
 
   Version incrementMajorVersion(String preRelease) {
-    return new Version(delegate.incrementMajorVersion(preRelease))
+    delegate = delegate.incrementMajorVersion(preRelease)
+    return new Version(delegate)
   }
 
   Version incrementMinorVersion() {
-    return new Version(delegate.incrementMinorVersion())
+    delegate = delegate.incrementMinorVersion()
+    return new Version(delegate)
   }
 
   Version incrementMinorVersion(String preRelease) {
-    return new Version(delegate.incrementMinorVersion(preRelease))
+    delegate = delegate.incrementMinorVersion(preRelease)
+    return new Version(delegate)
   }
 
   Version incrementPatchVersion() {
-    return new Version(delegate.incrementPatchVersion())
+    delegate = delegate.incrementPatchVersion()
+    return new Version(delegate)
   }
 
   Version incrementPatchVersion(String preRelease) {
-    return new Version(delegate.incrementPatchVersion(preRelease))
+    delegate = delegate.incrementPatchVersion(preRelease)
+    return new Version(delegate)
   }
 
   Version incrementPreReleaseVersion() {
-    return new Version(delegate.incrementPreReleaseVersion())
+    delegate = delegate.incrementPreReleaseVersion()
+    return new Version(delegate)
   }
 
   Version incrementBuildMetadata() {
-    return new Version(delegate.incrementBuildMetadata())
+    delegate = delegate.incrementBuildMetadata()
+    return new Version(delegate)
   }
 
   Version setPreReleaseVersion(String preRelease) {
-    return new Version(delegate.setPreReleaseVersion(preRelease))
+    delegate = delegate.setPreReleaseVersion(preRelease)
+    return new Version(delegate)
   }
 
   Version setBuildMetadata(String build) {
-    return new Version(delegate.setBuildMetadata(build))
+    delegate = delegate.setBuildMetadata(build)
+    return new Version(delegate)
   }
 
   int getMajorVersion() {
