@@ -10,8 +10,9 @@ def call(body) {
   body()
 
   String args = config.args
-  String mavenName = config.mavenName
   String jdkName = config.jdkName
+  String mavenName = config.mavenName
+  String mavenSettingsFile = config.mavenSettingsFile
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
@@ -20,16 +21,14 @@ def call(body) {
     //noinspection GroovyAssignabilityCheck
     withMavenEnv {
       envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "MAVEN_OPTS=-Xmx1536m -Xms512m"]
-      mavenToolName = mavenName
       jdkToolName = jdkName
+      mavenToolName = mavenName
       // Actually run Maven!
       // The -Dmaven.repo.local=${pwd()}/.repository means that Maven will create a
       // .repository directory at the root of the build (which it gets from the
       // pwd() Workflow call) and use that for the local Maven repository.
       mvn = {
-        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: '', variable: 'MAVEN_SETTINGS_PATH']]]) {
-          sh "mvn -s ${env.MAVEN_SETTINGS_PATH} -V -U -B -Dmaven.repo.local=${pwd()}/.repository ${args}"
-        }
+        sh "mvn -s ${mavenSettingsFile} -V -U -B -Dmaven.repo.local=${pwd()}/.repository ${args}"
       }
     }
   }
