@@ -67,7 +67,7 @@ def getProjectVersionString(ProjectType projectType) {
   def versionString = '0.0.1'
   switch (projectType) {
     case ProjectType.Maven:
-      pom = readMavenPom file: "${pwd()}/pom.xml"
+      def pom = readMavenPom file: 'pom.xml'
       versionString = pom.version
   }
   versionString
