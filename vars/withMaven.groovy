@@ -15,5 +15,5 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
-  flow.mvn(args)
+  flow.maven(args)
 }
