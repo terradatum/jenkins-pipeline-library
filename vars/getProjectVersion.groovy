@@ -30,12 +30,10 @@ def call(body) {
     patch = 0
   }
 
-  Version projectVersion = Version.valueOf("${major}.${minor}.${patch}")
-
   sh 'git rev-parse --short HEAD > commit'
   def commit = readFile('commit').trim()
 
-  projectVersion.buildMetadata = commit;
+  Version projectVersion = Version.valueOf("${major}.${minor}.${patch}+${commit}")
 
   echo "Project version: ${projectVersion}"
 
