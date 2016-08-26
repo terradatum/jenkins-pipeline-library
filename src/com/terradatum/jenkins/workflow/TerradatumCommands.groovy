@@ -3,6 +3,7 @@ package com.terradatum.jenkins.workflow
 
 import com.cloudbees.groovy.cps.NonCPS
 import jenkins.model.Jenkins
+import com.terradatum.jenkins.workflow.*
 
 /**
  * Created by rbellamy on 8/15/16.
