@@ -10,8 +10,8 @@ def call(body) {
   body()
 
   String args = config.args
-  String jreMajor = config.jreMajor
-  String jreUpdate = config.jreUpdate
+  String mavenName = config.mavenName
+  String jdkToolName = config.jdkName
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
@@ -20,8 +20,8 @@ def call(body) {
     //noinspection GroovyAssignabilityCheck
     withMavenEnv {
       envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "MAVEN_OPTS=-Xmx1536m -Xms512m"]
-      mavenName = 'maven-3.3.9'
-      jdkName = "jdk-1.${jreMajor}.0_${jreUpdate}"
+      mavenToolName = mavenName
+      jdkToolName = jdkName
       // Actually run Maven!
       // The -Dmaven.repo.local=${pwd()}/.repository means that Maven will create a
       // .repository directory at the root of the build (which it gets from the

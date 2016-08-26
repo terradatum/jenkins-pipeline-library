@@ -9,15 +9,15 @@ def call(body) {
   body.delegate = config
   body()
 
-  String mavenName = config.mavenName
-  String jdkName = config.jdkName
+  String mavenToolName = config.mavenToolName
+  String jdkToolName = config.jdkToolName
   List envVars = config.envVars
   Closure mvn = config.mvn
 
   // Using the "tool" Workflow call automatically installs those tools on the
   // node.
-  String mavenTool = tool name: mavenName, type: 'hudson.tasks.Maven$MavenInstallation'
-  String jdkTool = tool name: jdkName, type: 'hudson.model.JDK'
+  String mavenTool = tool name: mavenToolName, type: 'hudson.tasks.Maven$MavenInstallation'
+  String jdkTool = tool name: jdkToolName, type: 'hudson.model.JDK'
 
   // Set JAVA_HOME, MAVEN_HOME and special PATH variables for the tools we're using.
   List mavenEnv = ["PATH+MVN=${mavenTool}/bin", "PATH+JDK=${jdkTool}/bin", "JAVA_HOME=${jdkTool}", "MAVEN_HOME=${mavenTool}"]
