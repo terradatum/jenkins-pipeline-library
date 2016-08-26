@@ -77,7 +77,7 @@ def getProjectVersionString(ProjectType projectType) {
  * Maven commands
  */
 
-def mvn(String args) {
+def maven(String args) {
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
     // See below for what this method does - we're passing an arbitrary environment
