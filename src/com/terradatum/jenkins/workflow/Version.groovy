@@ -31,53 +31,43 @@ class Version implements Serializable {
   }
 
   Version incrementMajorVersion() {
-    delegate = delegate.incrementMajorVersion()
-    return new Version(delegate)
+    return new Version(delegate.incrementMajorVersion())
   }
 
   Version incrementMajorVersion(String preRelease) {
-    delegate = delegate.incrementMajorVersion(preRelease)
-    return new Version(delegate)
+    return new Version(delegate.incrementMajorVersion(preRelease))
   }
 
   Version incrementMinorVersion() {
-    delegate = delegate.incrementMinorVersion()
-    return new Version(delegate)
+    return new Version(delegate.incrementMinorVersion())
   }
 
   Version incrementMinorVersion(String preRelease) {
-    delegate = delegate.incrementMinorVersion(preRelease)
-    return new Version(delegate)
+    return new Version(delegate.incrementMinorVersion(preRelease))
   }
 
   Version incrementPatchVersion() {
-    delegate = delegate.incrementPatchVersion()
-    return new Version(delegate)
+    return new Version(delegate.incrementPatchVersion())
   }
 
   Version incrementPatchVersion(String preRelease) {
-    delegate = delegate.incrementPatchVersion(preRelease)
-    return new Version(delegate)
+    return new Version(delegate.incrementPatchVersion(preRelease))
   }
 
   Version incrementPreReleaseVersion() {
-    delegate = delegate.incrementPreReleaseVersion()
-    return new Version(delegate)
+    return new Version(delegate.incrementPreReleaseVersion())
   }
 
   Version incrementBuildMetadata() {
-    delegate = delegate.incrementBuildMetadata()
-    return new Version(delegate)
+    return new Version(delegate.incrementBuildMetadata())
   }
 
   Version setPreReleaseVersion(String preRelease) {
-    delegate = delegate.setPreReleaseVersion(preRelease)
-    return new Version(delegate)
+    return new Version(delegate.setPreReleaseVersion(preRelease))
   }
 
   Version setBuildMetadata(String build) {
-    delegate = delegate.setBuildMetadata(build)
-    return new Version(delegate)
+    return new Version(delegate.setBuildMetadata(build))
   }
 
   int getMajorVersion() {
