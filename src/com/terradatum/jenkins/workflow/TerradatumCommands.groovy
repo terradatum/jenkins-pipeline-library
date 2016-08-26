@@ -84,8 +84,8 @@ def maven(String args) {
     // variable to it so that JAVA_OPTS and MAVEN_OPTS are set correctly.
     withMavenEnv {
       envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "MAVEN_OPTS=-Xmx1536m -Xms512m"]
-      maven = 'maven-3.3.9'
-      jdk = "jdk-1.${env.JRE_MAJOR}.0_${env.JRE_UPDATE}"
+      mavenName = 'maven-3.3.9'
+      jdkName = "jdk-1.${env.JRE_MAJOR}.0_${env.JRE_UPDATE}"
       // Actually run Maven!
       // The -Dmaven.repo.local=${pwd()}/.repository means that Maven will create a
       // .repository directory at the root of the build (which it gets from the
