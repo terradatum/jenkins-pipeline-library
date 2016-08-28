@@ -45,15 +45,21 @@ def Version incrementVersion(String project, VersionType versionType, Version ve
     }
     switch (versionType) {
       case VersionType.Major:
-        nextVersion = currentVersion.incrementMajorVersion()
+        nextVersion = currentVersion.incrementPatchVersion()
         break
       case VersionType.Minor:
-        nextVersion = currentVersion.incrementMinorVersion()
+        nextVersion = currentVersion.incrementPatchVersion()
         break
       default:
         nextVersion = currentVersion.incrementPatchVersion()
         break
     }
+    nextVersion = currentVersion.preReleaseVersion ?
+        nextVersion.setPreReleaseVersion(currentVersion.preReleaseVersion) :
+        nextVersion
+    nextVersion = currentVersion.buildMetadata ?
+        nextVersion.setBuildMetadata(currentVersion.buildMetadata) :
+        nextVersion
     setStringInFile(path, nextVersion.toString())
   }
   nextVersion

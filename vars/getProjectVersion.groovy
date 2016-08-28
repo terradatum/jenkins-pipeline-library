@@ -18,6 +18,7 @@ def call(body) {
   def flow = new TerradatumCommands()
 
   ProjectType projectType = config.projectType
+  boolean includeBuildMetadata = config.includeBuildMetadata
 
   def projectVersionString = flow.getProjectVersionString(projectType).tokenize('.')
 
@@ -30,10 +31,14 @@ def call(body) {
     patch = 0
   }
 
-  sh 'git rev-parse --short HEAD > commit'
-  def commit = readFile('commit').trim()
+  if (includeBuildMetadata) {
+    sh 'git rev-parse --short HEAD > commit'
+    def commit = readFile('commit').trim()
 
-  Version projectVersion = Version.valueOf("${major}.${minor}.${patch}+${commit}")
+    Version projectVersion = Version.valueOf("${major}.${minor}.${patch}+${commit}")
+  } else {
+    Version projectVersion = Version.valueOf("${major}.${minor}.${patch}")
+  }
 
   echo "Project version: ${projectVersion}"
 
