@@ -115,6 +115,16 @@ def getTagVersion(Version version) {
   newVersion
 }
 
+def getPatchVersion(String project) {
+  def path = "${getPathFromJenkinsFullName(project)}/currentVersion"
+  Version persistedVersion
+  lock("${project}/currentVersion") {
+    def versionString = getStringInFile(path)
+    persistedVersion = versionString ? Version.valueOf(versionString) : Version.valueOf('0.0.1')
+  }
+  persistedVersion.patchVersion
+}
+
 def void gitMergeAndTag(String project, String targetBranch, String sourceBranch, Version releaseVersion) {
   sh 'git config user.email sysadmin@terradatum.com'
   sh 'git config user.name terradatum-automation'
