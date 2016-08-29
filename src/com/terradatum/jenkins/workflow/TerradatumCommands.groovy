@@ -48,8 +48,8 @@ static def getNexusVersions(String artifact) {
   def repo = 'https://nexus.terradatum.com/content/groups/public/com/terradatum'
   artifact = removeTrailingSlash(artifact)
 
+  def metadataUrl = "${repo}/${artifact}/maven-metadata.xml"
   try {
-    def metadataUrl = "${repo}/${artifact}/maven-metadata.xml"
     def modelMetaData = new XmlSlurper().parse(metadataUrl)
     return modelMetaData.versioning.versions
   } catch (err) {
