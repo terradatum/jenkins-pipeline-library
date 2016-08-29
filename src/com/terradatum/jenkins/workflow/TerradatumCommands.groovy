@@ -4,6 +4,14 @@ package com.terradatum.jenkins.workflow
 import com.cloudbees.groovy.cps.NonCPS
 import jenkins.model.Jenkins
 
+/*
+ * version processing
+ */
+
+// blocking call to get version, increment, and return
+// persists current version in "${path to Jenkins full name}/currentVersion" file
+// if a version is passed in, and is greater than the persisted version, then it overrides
+// the persisted version and becomes the new version.
 /**
  * Created by rbellamy on 8/15/16.
  *
@@ -15,30 +23,57 @@ import jenkins.model.Jenkins
  * 4. mvn dependency:get -Dartifact=org.jenkins-ci.plugins.workflow:workflow-api:2.1
  */
 
-/*
- * File and path operations, blocking and non-blocking
- */
-
 static def String getPathFromJenkinsFullName(String fullName) {
   Jenkins.instance.getItemByFullName(fullName).rootDir
 }
 
-/*
- * version processing
- */
+static def removeTrailingSlash (String myString){
+  if (myString.endsWith("/")) {
+    return myString.substring(0, myString.length() - 1);
+  }
+  return myString
+}
 
-// blocking call to get version, increment, and return
-// persists current version in "${path to Jenkins full name}/currentVersion" file
-// if a version is passed in, and is greater than the persisted version, then it overrides
-// the persisted version and becomes the new version.
-def Version incrementVersion(String project, VersionType versionType, Version version = null) {
+def getNexusLatestVersion(String artifact) {
+  String latest = getNexusVersions(artifact).latest
+  return Version.valueOf(latest)
+}
+
+def getNexusReleaseVersion(String artifact) {
+  String release = getNexusVersions(artifact).release
+  return Version.valueOf(release)
+}
+
+static def getNexusVersions(String artifact) {
+  def repo = 'https://nexus.terradatum.com/content/groups/public/com/terradatum'
+  artifact = removeTrailingSlash(artifact)
+
+  def modelMetaData = new XmlSlurper().parse(repo+'/'+artifact+'/maven-metadata.xml')
+  return modelMetaData.versioning
+}
+
+def getMaxNexusVersion(String project, String artifact, int major, int minor) {
+  lock("${project}/maxNexusVersion") {
+   def versioning = getNexusVersions(artifact)
+
+    List<Version> versions = versioning.versions.find {
+      def nexusVersion = Version.valueOf(it as String)
+      if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
+        nexusVersion
+      }
+    } as List<Version>
+    return versions.max()
+  }
+}
+
+def incrementVersion(String project, VersionType versionType, Version version = null) {
   def path = "${getPathFromJenkinsFullName(project)}/currentVersion"
   def currentVersion = Version.valueOf('0.0.1')
   def nextVersion = currentVersion
   lock("${project}/currentVersion") {
     def versionString = getStringInFile(path)
     def persistedVersion = versionString ? Version.valueOf(versionString) : currentVersion
-    if (version && version.compareWithBuildsTo(persistedVersion) < 0) {
+    if (version && version.lessThan(persistedVersion)) {
       currentVersion = persistedVersion
     } else if (version) {
       currentVersion = version
@@ -65,9 +100,6 @@ def Version incrementVersion(String project, VersionType versionType, Version ve
   nextVersion
 }
 
-// This method sets up the Maven and JDK tools, puts them in the environment along
-// with whatever other arbitrary environment variables we passed in, and runs the
-// body we passed in within that environment.
 // TODO: wire this up for other project types.
 def getProjectVersionString(ProjectType projectType) {
   def versionString = '0.0.1'
@@ -132,17 +164,6 @@ def setCurrentVersion(String project, Version version) {
   Version persistedVersion = version ?: Version.valueOf('0.0.1')
   lock("${project}/currentVersion") {
     setStringInFile(path, persistedVersion.toString())
-  }
-}
-
-def copyCurrentVersionFromDevelopToRelease(String project) {
-  def projectDevelop = "${project}/develop"
-  def developPath = "${getPathFromJenkinsFullName(projectDevelop)}/currentVersion"
-  def releasePath = "${getPathFromJenkinsFullName(project)}/currentVersion"
-  Version developVersion = getCurrentVersion(projectDevelop)
-  Version releaseVersion = getCurrentVersion(project)
-  if (developVersion.lessThan(releaseVersion)) {
-    sh "cp -f ${developPath} ${releasePath}"
   }
 }
 
