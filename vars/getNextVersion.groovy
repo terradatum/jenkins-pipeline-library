@@ -17,10 +17,10 @@ def call(body) {
   def flow = new TerradatumCommands()
 
   String project = config.project
-  VersionType type = config.versionType
+  VersionType versionType = config.versionType ?: VersionType.Patch
   Version version = config.version
 
-  Version nextVersion = flow.incrementVersion(project, type, version)
+  Version nextVersion = flow.incrementVersion(project, versionType, version)
 
   echo "Next version: ${nextVersion}"
 
