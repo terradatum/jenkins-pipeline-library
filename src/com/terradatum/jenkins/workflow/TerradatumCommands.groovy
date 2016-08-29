@@ -27,7 +27,7 @@ static def String getPathFromJenkinsFullName(String fullName) {
   Jenkins.instance.getItemByFullName(fullName).rootDir
 }
 
-static def removeTrailingSlash (String myString){
+def removeTrailingSlash (String myString){
   if (myString.endsWith("/")) {
     return myString.substring(0, myString.length() - 1);
   }
@@ -44,7 +44,7 @@ def getNexusReleaseVersion(String artifact) {
   return Version.valueOf(release)
 }
 
-static def getNexusVersions(String artifact) {
+def getNexusVersions(String artifact) {
   def repo = 'https://nexus.terradatum.com/content/groups/public/com/terradatum'
   artifact = removeTrailingSlash(artifact)
 
