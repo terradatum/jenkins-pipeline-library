@@ -1,9 +1,9 @@
-#!/usr/bin/env groovy
 import com.terradatum.jenkins.workflow.TerradatumCommands
 import com.terradatum.jenkins.workflow.Version
 
 /**
- * Created by rbellamy on 8/19/16.
+ * @author rbellamy@terradatum.com 
+ * @date 8/28/16
  */
 def call(body) {
   // evaluate the body block, and collect configuration into the object
@@ -14,10 +14,11 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
-  String project = config.project
-  String sourceBranch = config.sourceBranch
-  String targetBranch = config.targetBranch
-  Version releaseVersion = config.releaseVersion
+  Version version = config.version
 
-  flow.gitMergeAndTag(project, targetBranch, sourceBranch, releaseVersion)
+  Version newVersion = flow.getBuildMetadataVersion(version)
+
+  echo "Version with BuildMetadata: ${newVersion}"
+
+  newVersion
 }

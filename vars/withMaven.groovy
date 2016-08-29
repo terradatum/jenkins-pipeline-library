@@ -12,7 +12,6 @@ def call(body) {
   String args = config.args
   String jdkName = config.jdkName
   String mavenName = config.mavenName
-  String mavenSettingsFile = config.mavenSettingsFile
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {

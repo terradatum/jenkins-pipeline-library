@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+import com.terradatum.jenkins.workflow.TerradatumCommands
 import com.terradatum.jenkins.workflow.Version
 
 /**
@@ -13,33 +14,11 @@ def call(body) {
   body.delegate = config
   body()
 
+  def flow = new TerradatumCommands()
+
   Version version = config.version
 
-  // if the repo has no tags this command will fail
-  // if this command fails, and there is no config version, rethrow the error
-  try {
-    sh "git tag --sort version:refname | tail -1 > version.tmp"
-  } catch(err) {
-    echo "${err}"
-    if (!version) {
-      throw err
-    }
-  }
-
-  String tag = readFile 'version.tmp'
-
-  if (tag == null || tag.size() == 0){
-    echo "No existing tag found. Using version: ${version}"
-    return version
-  }
-
-  tag = tag.trim()
-
-  def semanticVersion = Version.valueOf(tag)
-  Version newVersion = version
-  if (newVersion.compareWithBuildsTo(semanticVersion) < 0) {
-    newVersion = semanticVersion
-  }
+  Version newVersion = flow.getTagVersion(version)
 
   echo "Tagged version: ${newVersion}"
 

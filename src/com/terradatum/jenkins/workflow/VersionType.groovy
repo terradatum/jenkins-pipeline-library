@@ -7,5 +7,7 @@ package com.terradatum.jenkins.workflow
 enum VersionType {
   Major,
   Minor,
-  Patch
+  Patch,
+  PreRelease,
+  BuildMetadata
 }

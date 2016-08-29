@@ -50,16 +50,16 @@ def Version incrementVersion(String project, VersionType versionType, Version ve
       case VersionType.Minor:
         nextVersion = currentVersion.incrementPatchVersion()
         break
-      default:
+      case VersionType.Patch:
         nextVersion = currentVersion.incrementPatchVersion()
         break
+      case VersionType.PreRelease:
+        nextVersion = currentVersion.incrementPreReleaseVersion()
+        break
+      case VersionType.BuildMetadata:
+        nextVersion = currentVersion.incrementBuildMetadata()
+        break
     }
-    nextVersion = currentVersion.preReleaseVersion ?
-        nextVersion.setPreReleaseVersion(currentVersion.preReleaseVersion) :
-        nextVersion
-    nextVersion = currentVersion.buildMetadata ?
-        nextVersion.setBuildMetadata(currentVersion.buildMetadata) :
-        nextVersion
     setStringInFile(path, nextVersion.toString())
   }
   nextVersion
@@ -77,6 +77,59 @@ def getProjectVersionString(ProjectType projectType) {
       versionString = pom.version
   }
   versionString
+}
+
+def getBuildMetadataVersion(Version version) {
+  sh 'git rev-parse --short HEAD > commit'
+  String commit = readFile('commit').trim()
+  version.setBuildMetadata(commit)
+}
+
+def getTagVersion(Version version) {
+
+  // if the repo has no tags this command will fail
+  // if this command fails, and there is no config version, rethrow the error
+  try {
+    sh "git tag --sort version:refname | tail -1 > version.tmp"
+  } catch(err) {
+    echo "${err}"
+    if (!version) {
+      throw err
+    }
+  }
+
+  String tag = readFile 'version.tmp'
+
+  if (tag == null || tag.size() == 0){
+    echo "No existing tag found. Using version: ${version}"
+    return version
+  }
+
+  tag = tag.trim()
+
+  def semanticVersion = Version.valueOf(tag)
+  Version newVersion = version
+  if (newVersion.compareWithBuildsTo(semanticVersion) < 0) {
+    newVersion = semanticVersion
+  }
+  newVersion
+}
+
+def void gitMergeAndTag(String project, String targetBranch, String sourceBranch, Version releaseVersion) {
+  sh 'git config user.email sysadmin@terradatum.com'
+  sh 'git config user.name terradatum-automation'
+  sh "git remote set-url origin git@github.com:${project}"
+
+  sh "git checkout ${targetBranch}"
+  sh "git merge origin/${sourceBranch}"
+
+  sh 'git tag -d \$(git tag)'
+  sh 'git fetch --tags'
+  echo "New release version ${releaseVersion.normalVersion}"
+  sh "git commit -a -m 'Release ${releaseVersion.normalVersion}'"
+
+  sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+  sh "git push origin ${targetBranch}"
 }
 
 /*
