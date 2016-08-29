@@ -135,6 +135,17 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
+def copyCurrentVersionFromDevelopToRelease(String project) {
+  def projectDevelop = "${project}/develop"
+  def developPath = "${getPathFromJenkinsFullName(projectDevelop)}/currentVersion"
+  def releasePath = "${getPathFromJenkinsFullName(project)}/currentVersion"
+  Version developVersion = getCurrentVersion(projectDevelop)
+  Version releaseVersion = getCurrentVersion(project)
+  if (developVersion.lessThan(releaseVersion)) {
+    sh "cp -f ${developPath} ${releasePath}"
+  }
+}
+
 def void gitMergeAndTag(String project, String targetBranch, String sourceBranch, Version releaseVersion) {
   sh 'git config user.email sysadmin@terradatum.com'
   sh 'git config user.name terradatum-automation'
