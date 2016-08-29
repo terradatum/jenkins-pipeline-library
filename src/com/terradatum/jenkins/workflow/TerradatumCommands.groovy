@@ -48,21 +48,32 @@ static def getNexusVersions(String artifact) {
   def repo = 'https://nexus.terradatum.com/content/groups/public/com/terradatum'
   artifact = removeTrailingSlash(artifact)
 
-  def modelMetaData = new XmlSlurper().parse(repo+'/'+artifact+'/maven-metadata.xml')
-  return modelMetaData.versioning
+  try {
+    def metadataUrl = "${repo}/${artifact}/maven-metadata.xml"
+    def modelMetaData = new XmlSlurper().parse(metadataUrl)
+    return modelMetaData.versioning.versions
+  } catch (err) {
+    echo "There was an error retrieving ${metadataUrl}: ${err}"
+  } finally {
+    return [Version.valueOf('0.0.1')]
+  }
 }
 
 def getMaxNexusVersion(String project, String artifact, int major, int minor) {
   lock("${project}/maxNexusVersion") {
-   def versioning = getNexusVersions(artifact)
+   def nexusVersions = getNexusVersions(artifact)
 
-    List<Version> versions = versioning.versions.find {
+    List<Version> versions = nexusVersions.find {
       def nexusVersion = Version.valueOf(it as String)
       if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
         nexusVersion
       }
     } as List<Version>
-    return versions.max()
+    if (versions.size > 0) {
+      return versions.max()
+    } else {
+      return Version.valueOf('0.0.1')
+    }
   }
 }
 
