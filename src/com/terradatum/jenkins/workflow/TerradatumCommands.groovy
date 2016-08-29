@@ -50,18 +50,17 @@ def getNexusVersions(String artifact) {
 
   def metadataUrl = "${repo}/${artifact}/maven-metadata.xml"
   try {
-    def modelMetaData = new XmlSlurper().parse(metadataUrl)
-    return modelMetaData.versioning.versions
+    def modelMetadata = new XmlSlurper().parse(metadataUrl)
+    return modelMetadata.versioning.versions
   } catch (err) {
     echo "There was an error retrieving ${metadataUrl}: ${err}"
-  } finally {
     return [Version.valueOf('0.0.1')]
   }
 }
 
 def getMaxNexusVersion(String project, String artifact, int major, int minor) {
   lock("${project}/maxNexusVersion") {
-   def nexusVersions = getNexusVersions(artifact)
+    def nexusVersions = getNexusVersions(artifact)
 
     List<Version> versions = nexusVersions.find {
       def nexusVersion = Version.valueOf(it as String)
@@ -69,7 +68,7 @@ def getMaxNexusVersion(String project, String artifact, int major, int minor) {
         nexusVersion
       }
     } as List<Version>
-    if (versions.size > 0) {
+    if (versions && versions.size > 0) {
       return versions.max()
     } else {
       return Version.valueOf('0.0.1')
