@@ -115,14 +115,24 @@ def getTagVersion(Version version) {
   newVersion
 }
 
-def getPatchVersion(String project) {
+def getCurrentVersion(String project) {
   def path = "${getPathFromJenkinsFullName(project)}/currentVersion"
-  Version persistedVersion
+  Version persistedVersion = Version.valueOf('0.0.1')
   lock("${project}/currentVersion") {
     def versionString = getStringInFile(path)
-    persistedVersion = versionString ? Version.valueOf(versionString) : Version.valueOf('0.0.1')
+    if (versionString?.trim()) {
+      persistedVersion = Version.valueOf(versionString)
+    }
   }
-  persistedVersion.patchVersion
+  persistedVersion
+}
+
+def setCurrentVersion(String project, Version version) {
+  def path = "${getPathFromJenkinsFullName(project)}/currentVersion"
+  Version persistedVersion = version ?: Version.valueOf('0.0.1')
+  lock("${project}/currentVersion") {
+    setStringInFile(path, persistedVersion.toString())
+  }
 }
 
 def void gitMergeAndTag(String project, String targetBranch, String sourceBranch, Version releaseVersion) {

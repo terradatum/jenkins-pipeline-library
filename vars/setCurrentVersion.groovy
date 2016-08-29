@@ -13,10 +13,9 @@ def call(body) {
   def flow = new TerradatumCommands()
 
   String project = config.project
+  Version version = config.version
 
-  int patch = flow.getPatchVersion(project)
+  int patch = flow.setCurrentVersion(project, version)
 
-  echo "Patch version: ${patch}"
-
-  return patch
+  echo "Set currentVersion: ${version}"
 }
