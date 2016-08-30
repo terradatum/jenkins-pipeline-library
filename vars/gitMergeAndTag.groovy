@@ -1,7 +1,5 @@
 #!/usr/bin/env groovy
-import com.terradatum.jenkins.workflow.TerradatumCommands
 import com.terradatum.jenkins.workflow.Version
-
 /**
  * Created by rbellamy on 8/19/16.
  */
@@ -12,12 +10,20 @@ def call(body) {
   body.delegate = config
   body()
 
-  def flow = new TerradatumCommands()
-
   String project = config.project
   String sourceBranch = config.sourceBranch
   String targetBranch = config.targetBranch
   Version releaseVersion = config.releaseVersion
 
-  flow.gitMergeAndTag(project, targetBranch, sourceBranch, releaseVersion)
+  sh 'git config user.email sysadmin@terradatum.com'
+  sh 'git config user.name terradatum-automation'
+  sh "git remote set-url origin git@github.com:${project}"
+  sh "git checkout ${targetBranch}"
+  sh "git merge origin/${sourceBranch}"
+  sh 'git tag -d \$(git tag)'
+  sh 'git fetch --tags'
+  echo "New release version ${releaseVersion.normalVersion}"
+  sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+  sh "git push origin ${targetBranch}"
+  sh "git push --tags"
 }

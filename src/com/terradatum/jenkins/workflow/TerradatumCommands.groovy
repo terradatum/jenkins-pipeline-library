@@ -190,21 +190,16 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
-def void gitMergeAndTag(String project, String targetBranch, String sourceBranch, Version releaseVersion) {
-  sh 'git config user.email sysadmin@terradatum.com'
-  sh 'git config user.name terradatum-automation'
-  sh "git remote set-url origin git@github.com:${project}"
+def searchAndReplaceMavenRevision(Version version) {
+  if (version.buildMetadata) {
+    sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+  } else {
+    sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+  }
+}
 
-  sh "git checkout ${targetBranch}"
-  sh "git merge origin/${sourceBranch}"
-
-  sh 'git tag -d \$(git tag)'
-  sh 'git fetch --tags'
-  echo "New release version ${releaseVersion.normalVersion}"
-
-  sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
-  sh "git push origin ${targetBranch}"
-  sh "git push --tags"
+def resetBranchToCheckout() {
+  sh 'git checkout -- .'
 }
 
 /*
