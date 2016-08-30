@@ -20,5 +20,5 @@ def call(body) {
 
   flow.searchAndReplaceMavenRevision(version)
   cmds.call()
-  flow.resetBranchToCheckout()
+  flow.gitResetBranch()
 }

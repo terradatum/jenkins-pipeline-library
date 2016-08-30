@@ -200,7 +200,27 @@ def searchAndReplaceMavenRevision(Version version) {
   }
 }
 
-def resetBranchToCheckout() {
+def void gitMerge(String project, String targetBranch, String sourceBranch) {
+  sh 'git config user.email sysadmin@terradatum.com'
+  sh 'git config user.name terradatum-automation'
+  sh "git remote set-url origin git@github.com:${project}"
+  sh "git checkout ${targetBranch}"
+  sh "git merge origin/${sourceBranch}"
+}
+
+def void gitTag(Version releaseVersion) {
+  sh 'git tag -d \$(git tag)'
+  sh 'git fetch --tags'
+  echo "New release version ${releaseVersion.normalVersion}"
+  sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+}
+
+def void gitPush(String targetBranch) {
+  sh "git push origin ${targetBranch}"
+  sh "git push --tags"
+}
+
+def gitResetBranch() {
   sh 'git checkout -- .'
 }
 
