@@ -2,6 +2,7 @@
 package com.terradatum.jenkins.workflow
 
 import com.cloudbees.groovy.cps.NonCPS
+import groovy.util.slurpersupport.Node
 import jenkins.model.Jenkins
 
 /*
@@ -60,19 +61,19 @@ def getNexusVersions(String artifact) {
 
 def getMaxNexusVersion(String project, String artifact, int major, int minor) {
   lock("${project}/maxNexusVersion") {
-    List<String> nexusVersions = getNexusVersions(artifact).version
+    List<Node> nexusVersions = getNexusVersions(artifact).version
     List<Version> versions = new ArrayList<>()
     for (int i = 0; i < nexusVersions.size(); i++) {
-      String nexusVersionString = nexusVersions[i]
+      Node nexusVersionNode = nexusVersions[i]
       try {
-        if (nexusVersionString) {
-          def nexusVersion = Version.valueOf(nexusVersionString)
+        if (nexusVersionNode) {
+          def nexusVersion = Version.valueOf(nexusVersionNode.text())
           if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
             versions.add(nexusVersion)
           }
         }
       } catch (err) {
-        echo "Not valid semantic version: ${nexusVersionString}, error: ${err}"
+        echo "Not valid semantic version: ${nexusVersionNode}, error: ${err}"
       }
     }
     if (versions && versions.size() > 0) {
