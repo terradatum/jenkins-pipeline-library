@@ -196,7 +196,6 @@ def void gitMergeAndTag(String project, String targetBranch, String sourceBranch
   sh 'git tag -d \$(git tag)'
   sh 'git fetch --tags'
   echo "New release version ${releaseVersion.normalVersion}"
-  sh "git commit -a -m 'Release ${releaseVersion.normalVersion}'"
 
   sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
   sh "git push origin ${targetBranch}"
