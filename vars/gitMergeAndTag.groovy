@@ -18,7 +18,8 @@ def call(body) {
   String targetBranch = config.targetBranch
   Version releaseVersion = config.releaseVersion
 
-  flow.gitMerge(project, targetBranch, sourceBranch)
+  flow.gitConfig(project)
+  flow.gitMerge(targetBranch, sourceBranch)
   flow.gitTag(releaseVersion)
   flow.gitPush(targetBranch)
 }

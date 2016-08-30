@@ -13,9 +13,11 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
+  String project = config.project
   String targetBranch = config.targetBranch
   Version releaseVersion = config.releaseVersion
 
+  flow.gitConfig(project)
   flow.gitTag(releaseVersion)
   flow.gitPush(targetBranch)
 }

@@ -200,12 +200,15 @@ def searchAndReplaceMavenRevision(Version version) {
   }
 }
 
-def void gitMerge(String project, String targetBranch, String sourceBranch) {
+def void gitMerge(String targetBranch, String sourceBranch) {
+  sh "git checkout ${targetBranch}"
+  sh "git merge origin/${sourceBranch}"
+}
+
+def void gitConfig(String project) {
   sh 'git config user.email sysadmin@terradatum.com'
   sh 'git config user.name terradatum-automation'
   sh "git remote set-url origin git@github.com:${project}"
-  sh "git checkout ${targetBranch}"
-  sh "git merge origin/${sourceBranch}"
 }
 
 def void gitTag(Version releaseVersion) {

@@ -16,6 +16,7 @@ def call(body) {
   String sourceBranch = config.sourceBranch
   String targetBranch = config.targetBranch
 
-  flow.gitMerge(project, targetBranch, sourceBranch)
+  flow.gitConfig(project)
+  flow.gitMerge(targetBranch, sourceBranch)
   flow.gitPush(targetBranch)
 }
