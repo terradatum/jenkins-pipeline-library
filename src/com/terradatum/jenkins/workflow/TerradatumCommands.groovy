@@ -225,6 +225,7 @@ def void gitPush(String targetBranch) {
 
 def void gitCheckout(String targetBranch) {
   sh "git checkout ${targetBranch}"
+  sh 'git pull'
 }
 
 def gitResetBranch() {
