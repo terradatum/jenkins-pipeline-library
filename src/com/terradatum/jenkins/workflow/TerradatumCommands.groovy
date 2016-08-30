@@ -191,10 +191,12 @@ def setCurrentVersion(String project, Version version) {
 }
 
 def searchAndReplaceMavenRevision(Version version) {
-  if (version.buildMetadata) {
-    sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
-  } else {
-    sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+  if (version) {
+    if (version.buildMetadata) {
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+    } else {
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+    }
   }
 }
 
