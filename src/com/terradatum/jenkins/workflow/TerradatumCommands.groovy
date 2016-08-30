@@ -203,7 +203,7 @@ def void gitMergeAndTag(String project, String targetBranch, String sourceBranch
 }
 
 /*
- * NonCPS - non-sandboxed methods
+ * NonCPS - non-serializable methods
  */
 // read full text from file
 @NonCPS
