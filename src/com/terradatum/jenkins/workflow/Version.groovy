@@ -9,7 +9,7 @@ import com.cloudbees.groovy.cps.NonCPS
  * @author rbellamy@terradatum.com 
  * @date 8/21/16
  */
-class Version implements Serializable {
+class Version implements Serializable, Comparable {
 
   private static final long serialVersionUID = -2008891377046871665L;
   com.github.zafarkhaja.semver.Version delegate;
@@ -128,8 +128,10 @@ class Version implements Serializable {
     return delegate.toString()
   }
 
-  int compareTo(Version other) {
-    return delegate <=> other.delegate
+  @Override
+  @NonCPS
+  int compareTo(Object other) {
+    return delegate <=> (other as Version).delegate
   }
 
   int compareWithBuildsTo(Version other) {
