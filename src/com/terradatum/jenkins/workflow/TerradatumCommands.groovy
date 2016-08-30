@@ -60,15 +60,25 @@ def getNexusVersions(String artifact) {
 
 def getMaxNexusVersion(String project, String artifact, int major, int minor) {
   lock("${project}/maxNexusVersion") {
-    def nexusVersions = getNexusVersions(artifact)
+    def nexusVersions = getNexusVersions(artifact).version
 
-    List<Version> versions = nexusVersions.find {
-      def nexusVersion = Version.valueOf(it as String)
-      if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
-        nexusVersion
+    List<Version> versions = nexusVersions.findResults {
+      try {
+        if (it) {
+          def nexusVersion = Version.valueOf(it as String)
+          if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
+            return nexusVersion
+          } else {
+            return null
+          }
+        }
+      } catch (err) {
+        echo "Not valid semantic version: ${it}, error: ${err}"
+        return null
       }
-    } as List<Version>
-    if (versions && versions.size > 0) {
+      return null
+    }
+    if (versions && versions.size() > 0) {
       return versions.max()
     } else {
       return Version.valueOf('0.0.1')
