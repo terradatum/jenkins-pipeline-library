@@ -13,7 +13,6 @@ def call(body) {
   def flow = new TerradatumCommands()
 
   String project = config.project
-  String sourceBranch = config.sourceBranch
   String targetBranch = config.targetBranch
 
   flow.gitConfig(project)
