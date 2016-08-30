@@ -19,7 +19,7 @@ def call(body) {
   String artifact = config.artifact
   Version version = config.version
 
-  Version maxNexusVersion = flow.getMaxNexusVersion(project, artifact, version.majorVersion, version.minorVersion) as Version
+  Version maxNexusVersion = flow.getMaxNexusVersion(project, artifact, version) as Version
 
   echo "Max Nexus version: ${maxNexusVersion}"
 

@@ -59,7 +59,7 @@ def getNexusVersions(String artifact) {
   }
 }
 
-def getMaxNexusVersion(String project, String artifact, int major, int minor) {
+def getMaxNexusVersion(String project, String artifact, Version version) {
   lock("${project}/maxNexusVersion") {
     List<Node> nexusVersions = getNexusVersions(artifact).version
     List<Version> versions = new ArrayList<>()
@@ -68,7 +68,7 @@ def getMaxNexusVersion(String project, String artifact, int major, int minor) {
       try {
         if (nexusVersionNode) {
           def nexusVersion = Version.valueOf(nexusVersionNode.text())
-          if (nexusVersion.majorVersion == major && nexusVersion.minorVersion == minor) {
+          if (nexusVersion.majorVersion == version.majorVersion && nexusVersion.minorVersion == version.minorVersion) {
             versions.add(nexusVersion)
           }
         }
@@ -77,7 +77,12 @@ def getMaxNexusVersion(String project, String artifact, int major, int minor) {
       }
     }
     if (versions && versions.size() > 0) {
-      return versions.max()
+      def maxVersion = versions.max()
+      if (maxVersion.lessThan(version)) {
+        return version
+      } else {
+        return maxVersion
+      }
     } else {
       return Version.valueOf('0.0.1')
     }
