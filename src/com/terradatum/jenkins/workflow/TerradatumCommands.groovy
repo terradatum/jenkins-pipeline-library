@@ -1,7 +1,6 @@
 #!/usr/bin/env groovy
 package com.terradatum.jenkins.workflow
 
-import com.beust.jcommander.internal.Lists
 import com.cloudbees.groovy.cps.NonCPS
 import jenkins.model.Jenkins
 
@@ -62,7 +61,7 @@ def getNexusVersions(String artifact) {
 def getMaxNexusVersion(String project, String artifact, int major, int minor) {
   lock("${project}/maxNexusVersion") {
     List<String> nexusVersions = getNexusVersions(artifact).version
-    List<Version> versions = Lists.newArrayList()
+    List<Version> versions = new ArrayList<>()
     for (int i = 0; i < nexusVersions.size(); i++) {
       String nexusVersionString = nexusVersions[i]
       try {
