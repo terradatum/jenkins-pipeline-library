@@ -223,6 +223,10 @@ def void gitPush(String targetBranch) {
   sh "git push --tags"
 }
 
+def void gitCheckout(String targetBranch) {
+  sh "git checkout ${targetBranch}"
+}
+
 def gitResetBranch() {
   sh 'git checkout -- .'
 }
