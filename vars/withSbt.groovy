@@ -1,3 +1,5 @@
+import com.terradatum.jenkins.workflow.Version
+
 /**
  * @author rbellamy@terradatum.com 
  * @date 8/23/16
@@ -26,13 +28,21 @@ def call(body) {
       // envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "SBT_OPTS=-Xmx1536m -Xms512m"]
       jdkToolName = jdkName
       sbtToolName = sbtName
+      sbtToolVersion = Version.valueOf(sbtName.tokenize("-")[1])
       // Actually run SBT!
-      // The -Dsbt.repo.local=${pwd()}/.repository means that Maven will create a
-      // .repository directory at the root of the build (which it gets from the
-      // pwd() Workflow call) and use that for the local Maven repository.
+      // The ivy cache will be placed one directory above the workspace... which should put it in the
+      // github "repo branches" directory - this hopefully allows different branches to share the same
+      // ivy cache.
       sbt = {
-        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/.sbt/settings.xml", variable: '']]]) {
-          sh "sbt -s ${pwd()}/.m2/settings.xml -V -U -B -Dsbt.repo.local=${pwd()}/.m2/repository ${args}"
+        // custom resolvers
+        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/repositories", variable: '']]]) {
+          // credentials for pushing builds to Nexus
+          wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/.credentials", variable: '']]]) {
+            // global publishing script
+            wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt", variable: '']]]) {
+              sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -Dsbt.repo=${pwd()}/../.sbt/repositories ${args}"
+            }
+          }
         }
       }
     }
