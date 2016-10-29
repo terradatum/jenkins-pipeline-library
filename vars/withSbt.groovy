@@ -34,15 +34,12 @@ def call(body) {
       // github "repo branches" directory - this hopefully allows different branches to share the same
       // ivy cache.
       sbt = {
-        // custom resolvers
-        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/repositories", variable: '']]]) {
-          // credentials for pushing builds to Nexus
-          wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/.credentials", variable: '']]]) {
-            // global publishing script
-            wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt", variable: '']]]) {
-              sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -Dsbt.repo=${pwd()}/../.sbt/repositories ${args}"
-            }
-          }
+        configFileProvider([
+            configFile(fileId: '4b0d3a2c-450f-4f20-bd9f-c135892f8cee', targetLocation: "${pwd()}/../.sbt/.credentials"), // credentials for pushing builds to Nexus
+            configFile(fileId: 'efc4d42d-ce62-41ab-b722-9ccdcc83ff84', targetLocation: "${pwd()}/../.sbt/repositories"), // custom resolvers
+            configFile(fileId: 'db12ddf9-3e34-49da-a013-416286331a9f', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt") // global publishing script
+        ]) {
+          sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -Dsbt.repo=${pwd()}/../.sbt/repositories ${args}"
         }
       }
     }

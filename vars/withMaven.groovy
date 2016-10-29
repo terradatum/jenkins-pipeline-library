@@ -1,5 +1,5 @@
 /**
- * @author rbellamy@terradatum.com 
+ * @author rbellamy@terradatum.com
  * @date 8/23/16
  *
  * This method sets up the Maven and JDK tools, along with whatever other arbitrary environment
@@ -27,10 +27,12 @@ def call(body) {
       mavenToolName = mavenName
       // Actually run Maven!
       // The -Dmaven.repo.local=${pwd()}/.repository means that Maven will create a
-      // .repository directory at the root of the build (which it gets from the
+      // .repository directory at the in the "git repository" root of the build (which it gets from the
       // pwd() Workflow call) and use that for the local Maven repository.
+      // e.g. using "${pwd()}/../.m2" places the repository in a global location, /var/lib/jenkins/workspace, while
+      //      using "${pwd()}/.m2" places the repository in the project location, /var/lib/jenkins/workspace/<project directory>
       mvn = {
-        wrap([$class: 'ConfigFileBuildWrapper', managedFiles: [[fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', replaceTokens: false, targetLocation: "${pwd()}/../.m2/settings.xml", variable: '']]]) {
+        configFileProvider([configFile(fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', targetLocation: '${pwd()}/../.m2/settings.xml')]) {
           sh "mvn -s ${pwd()}/../.m2/settings.xml -V -U -B -Dmaven.repo.local=${pwd()}/../.m2/repository ${args}"
         }
       }
