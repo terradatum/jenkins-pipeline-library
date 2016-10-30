@@ -16,7 +16,7 @@ def call(body) {
 
   // Using the "tool" Workflow call automatically installs those tools on the
   // node.
-  String sbtTool = tool name: sbtToolName, type: 'hudson.tasks.Maven$MavenInstallation'
+  String sbtTool = tool name: sbtToolName, type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
   String jdkTool = tool name: jdkToolName, type: 'hudson.model.JDK'
 
   // Set JAVA_HOME, SBT_HOME and special PATH variables for the tools we're using.

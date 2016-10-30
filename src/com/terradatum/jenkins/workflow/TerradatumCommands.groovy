@@ -2,6 +2,7 @@
 package com.terradatum.jenkins.workflow
 
 import com.cloudbees.groovy.cps.NonCPS
+import groovy.json.JsonSlurper
 import groovy.util.slurpersupport.Node
 import jenkins.model.Jenkins
 
@@ -130,6 +131,16 @@ def getProjectVersionString(ProjectType projectType) {
     case ProjectType.Maven:
       def pom = readMavenPom file: 'pom.xml'
       versionString = pom.version
+      break
+    case ProjectType.Sbt:
+      def sbt = readFile 'build.sbt'
+      def matcher = sbt =~ /version\s*:=\s*"([0-9A-Za-z.-]+)",?/
+      //noinspection GroovyAssignabilityCheck
+      versionString = matcher[0][1]
+      break
+    case ProjectType.Npm:
+      def packageJson = new JsonSlurper().parseText(readFile('package.json'))
+      versionString = packageJson.version
   }
   versionString
 }
