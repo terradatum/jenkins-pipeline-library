@@ -23,6 +23,8 @@ import jenkins.model.Jenkins
  * 2. mvn dependency:get -Dartifact=com.github.zafarkhaja:java-semver:0.10-SNAPSHOT
  * 3. mvn dependency:get -Dartifact=org.6wind.jenkins:lockable-resources:1.10
  * 4. mvn dependency:get -Dartifact=org.jenkins-ci.plugins.workflow:workflow-api:2.1
+ *
+ * And then add them to the module as 'Maven' libraries.
  */
 
 static def String getPathFromJenkinsFullName(String fullName) {
@@ -148,8 +150,7 @@ def getProjectVersionString(ProjectType projectType) {
 }
 
 def getBuildMetadataVersion(Version version) {
-  sh 'git rev-parse --short HEAD > commit'
-  String commit = readFile('commit').trim()
+  String commit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
   version.setBuildMetadata(commit)
 }
 
@@ -157,16 +158,7 @@ def getTagVersion(Version version) {
 
   // if the repo has no tags this command will fail
   // if this command fails, and there is no config version, rethrow the error
-  try {
-    sh "git tag --sort version:refname | tail -1 > version.tmp"
-  } catch(err) {
-    echo "${err}"
-    if (!version) {
-      throw err
-    }
-  }
-
-  String tag = readFile 'version.tmp'
+  gitVersion = sh(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
 
   if (tag == null || tag.size() == 0){
     echo "No existing tag found. Using version: ${version}"
@@ -270,8 +262,13 @@ def void gitCheckout(String targetBranch) {
   }
 }
 
-def gitResetBranch() {
+def void gitResetBranch() {
   sh 'git checkout -- .'
+}
+
+def void dockerLogin() {
+  def dockerLogin = sh(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
+  sh "${dockerLogin}"
 }
 
 /*
