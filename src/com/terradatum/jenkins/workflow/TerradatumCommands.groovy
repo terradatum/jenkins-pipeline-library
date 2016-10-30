@@ -206,9 +206,9 @@ def setCurrentVersion(String project, Version version) {
 def searchAndReplacePomXmlRevision(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\$\\{revision\\}/${version.patchVersion}+${version.buildMetadata}/g' \"{}\" \\;"
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
     } else {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
     }
   }
 }
@@ -234,8 +234,10 @@ def searchAndReplacePackageJsonSnapshot(Version version) {
 }
 
 def void gitMerge(String targetBranch, String sourceBranch) {
-  sh "git checkout ${targetBranch}"
-  sh "git merge origin/${sourceBranch}"
+  sshagent(['devops_deploy_DEV']) {
+    sh "git checkout ${targetBranch}"
+    sh "git merge origin/${sourceBranch}"
+  }
 }
 
 def void gitConfig(String project) {
@@ -245,20 +247,26 @@ def void gitConfig(String project) {
 }
 
 def void gitTag(Version releaseVersion) {
-  sh 'git tag -d \$(git tag)'
-  sh 'git fetch --tags'
-  echo "New release version ${releaseVersion.normalVersion}"
-  sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+  sshagent(['devops_deploy_DEV']) {
+    sh 'git tag -d \$(git tag)'
+    sh 'git fetch --tags'
+    echo "New release version ${releaseVersion.normalVersion}"
+    sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+  }
 }
 
 def void gitPush(String targetBranch) {
-  sh "git push origin ${targetBranch}"
-  sh "git push --tags"
+  sshagent(['devops_deploy_DEV']) {
+    sh "git push origin ${targetBranch}"
+    sh "git push --tags"
+  }
 }
 
 def void gitCheckout(String targetBranch) {
-  sh "git checkout ${targetBranch}"
-  sh 'git pull'
+  sshagent(['devops_deploy_DEV']) {
+    sh "git checkout ${targetBranch}"
+    sh 'git pull'
+  }
 }
 
 def gitResetBranch() {
