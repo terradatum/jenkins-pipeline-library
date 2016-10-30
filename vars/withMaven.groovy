@@ -32,7 +32,7 @@ def call(body) {
       // e.g. using "${pwd()}/../.m2" places the repository in a global location, /var/lib/jenkins/workspace, while
       //      using "${pwd()}/.m2" places the repository in the project location, /var/lib/jenkins/workspace/<project directory>
       mvn = {
-        configFileProvider([configFile(fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', targetLocation: '${pwd()}/../.m2/settings.xml')]) {
+        configFileProvider([configFile(fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', targetLocation: "${pwd()}/../.m2/settings.xml")]) {
           sh "mvn -s ${pwd()}/../.m2/settings.xml -V -U -B -Dmaven.repo.local=${pwd()}/../.m2/repository ${args}"
         }
       }
