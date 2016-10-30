@@ -139,8 +139,10 @@ def getProjectVersionString(ProjectType projectType) {
       versionString = matcher[0][1]
       break
     case ProjectType.Npm:
+      //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
       def packageJson = new JsonSlurper().parseText(readFile('package.json'))
       versionString = packageJson.version
+      break
   }
   versionString
 }
@@ -201,12 +203,32 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
-def searchAndReplaceMavenRevision(Version version) {
+def searchAndReplacePomXmlRevision(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\$\\{revision\\}/${version.patchVersion}+${version.buildMetadata}/g' \"{}\" \\;"
     } else {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+    }
+  }
+}
+
+def searchAndReplaceBuildSbtSnapshot(Version version) {
+  if (version) {
+    if (version.buildMetadata) {
+      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+    } else {
+      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
+    }
+  }
+}
+
+def searchAndReplacePackageJsonSnapshot(Version version) {
+  if (version) {
+    if (version.buildMetadata) {
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+    } else {
+      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
     }
   }
 }
