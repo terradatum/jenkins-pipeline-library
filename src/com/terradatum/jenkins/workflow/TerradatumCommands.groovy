@@ -241,6 +241,7 @@ def void gitMerge(String targetBranch, String sourceBranch) {
 }
 
 def void gitConfig(String project) {
+  sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
   sh 'git config user.email sysadmin@terradatum.com'
   sh 'git config user.name terradatum-automation'
   sh "git remote set-url origin git@github.com:${project}"
