@@ -23,7 +23,9 @@ def call(body) {
   List sbtEnv = ["PATH+SBT=${sbtTool}/bin", "PATH+JDK=${jdkTool}/bin", "JAVA_HOME=${jdkTool}", "SBT_HOME=${sbtTool}"]
 
   // Add any additional environment variables.
-  sbtEnv.addAll(envVars)
+  if (envVars) {
+    sbtEnv.addAll(envVars)
+  }
 
   // Invoke the body closure we're passed within the environment we've created.
   withEnv(sbtEnv) {

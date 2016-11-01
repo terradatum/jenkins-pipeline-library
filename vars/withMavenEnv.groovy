@@ -23,7 +23,9 @@ def call(body) {
   List mavenEnv = ["PATH+MVN=${mavenTool}/bin", "PATH+JDK=${jdkTool}/bin", "JAVA_HOME=${jdkTool}", "MAVEN_HOME=${mavenTool}"]
 
   // Add any additional environment variables.
-  mavenEnv.addAll(envVars)
+  if (envVars) {
+    mavenEnv.addAll(envVars)
+  }
 
   // Invoke the body closure we're passed within the environment we've created.
   withEnv(mavenEnv) {
