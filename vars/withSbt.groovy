@@ -40,7 +40,7 @@ def call(body) {
             configFile(fileId: 'db12ddf9-3e34-49da-a013-416286331a9f', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt"), // global publishing script
             configFile(fileId: '2fc34265-9616-4e2d-a268-078880a33cee', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/plugins/credentials.sbt") // credentials plugin
         ]) {
-          sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -sbt-boot ${pwd()}/../.sbt/boot -Dsbt.boot.properties=${pwd()}/../.sbt/repositories ${args}"
+          sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -sbt-boot ${pwd()}/../.sbt/boot ${args}"
         }
       }
     }
