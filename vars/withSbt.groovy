@@ -37,7 +37,8 @@ def call(body) {
         configFileProvider([
             configFile(fileId: '4b0d3a2c-450f-4f20-bd9f-c135892f8cee', targetLocation: "${pwd()}/../.sbt/.credentials"), // credentials for pushing builds to Nexus
             configFile(fileId: 'efc4d42d-ce62-41ab-b722-9ccdcc83ff84', targetLocation: "${pwd()}/../.sbt/repositories"), // custom resolvers
-            configFile(fileId: 'db12ddf9-3e34-49da-a013-416286331a9f', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt") // global publishing script
+            configFile(fileId: 'db12ddf9-3e34-49da-a013-416286331a9f', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/global.sbt"), // global publishing script
+            configFile(fileId: '2fc34265-9616-4e2d-a268-078880a33cee', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/plugins/credentials.sbt") // credentials plugin
         ]) {
           sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -sbt-boot ${pwd()}/../.sbt/boot -Dsbt.boot.properties=${pwd()}/../.sbt/repositories ${args}"
         }
