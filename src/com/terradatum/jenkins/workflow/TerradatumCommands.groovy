@@ -266,9 +266,13 @@ def void gitResetBranch() {
   sh 'git checkout -- .'
 }
 
-def void dockerLogin() {
+def void dockerLogin(Boolean useSudo) {
   def dockerLogin = sh(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
-  sh "${dockerLogin}"
+  if (useSudo) {
+    sh "sudo ${dockerLogin}"
+  } else {
+    sh "${dockerLogin}"
+  }
 }
 
 /*
