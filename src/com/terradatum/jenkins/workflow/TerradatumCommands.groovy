@@ -3,9 +3,9 @@ package com.terradatum.jenkins.workflow
 
 import com.cloudbees.groovy.cps.NonCPS
 import groovy.json.JsonSlurper
+import groovy.json.internal.LazyMap
 import groovy.util.slurpersupport.Node
 import jenkins.model.Jenkins
-
 /*
  * version processing
  */
@@ -142,7 +142,7 @@ def getProjectVersionString(ProjectType projectType) {
       break
     case ProjectType.Node:
       //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
-      def packageJson = new JsonSlurper().parseText(readFile('package.json'))
+      def packageJson = parseJsonText(readFile('package.json'))
       versionString = packageJson.version
       break
   }
@@ -291,6 +291,11 @@ static def void setStringInFile(String path, String value) {
   new File(path).newWriter().withWriter { w ->
     w << value
   }
+}
+
+@NonCPS
+static def HashMap parseJsonText(String jsonText) {
+  return new HashMap<>(new JsonSlurper().parseText(jsonText) as LazyMap)
 }
 
 return this
