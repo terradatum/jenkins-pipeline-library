@@ -20,9 +20,9 @@ def call(body) {
     //noinspection GroovyAssignabilityCheck
     withNodeEnv {
       nodeToolName = nodeName
-      // Actually run groovy!
+      // Actually run node!
       cmd = {
-        sh "gulp ${args}"
+        sh "node ${args}"
       }
     }
   }

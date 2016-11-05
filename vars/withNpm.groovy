@@ -18,8 +18,6 @@ def call(body) {
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
-    // See below for what this method does - we're passing an arbitrary environment
-    // variable to it so that JAVA_OPTS and MAVEN_OPTS are set correctly.
     //noinspection GroovyAssignabilityCheck
     withNodeEnv {
       nodeToolName = nodeName
