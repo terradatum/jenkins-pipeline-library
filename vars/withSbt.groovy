@@ -17,6 +17,7 @@ def call(body) {
   String args = config.args
   String jdkName = config.jdkName
   String sbtName = config.sbtName
+  List environment = config.environment
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
@@ -28,6 +29,7 @@ def call(body) {
       // envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "SBT_OPTS=-Xmx1536m -Xms512m"]
       jdkToolName = jdkName
       sbtToolName = sbtName
+      envVars = environment
       sbtToolVersion = Version.valueOf(sbtName.tokenize("-")[1])
       // Actually run SBT!
       // The ivy cache will be placed one directory above the workspace... which should put it in the

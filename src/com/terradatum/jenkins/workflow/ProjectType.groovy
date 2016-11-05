@@ -6,5 +6,5 @@ package com.terradatum.jenkins.workflow
 enum ProjectType {
   Maven,
   Sbt,
-  Npm
+  Node
 }

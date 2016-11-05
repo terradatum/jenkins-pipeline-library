@@ -140,7 +140,7 @@ def getProjectVersionString(ProjectType projectType) {
       //noinspection GroovyAssignabilityCheck
       versionString = matcher[0][1]
       break
-    case ProjectType.Npm:
+    case ProjectType.Node:
       //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
       def packageJson = new JsonSlurper().parseText(readFile('package.json'))
       versionString = packageJson.version
@@ -208,9 +208,9 @@ def searchAndReplacePomXmlRevision(Version version) {
 def searchAndReplaceBuildSbtSnapshot(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
+      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
@@ -218,9 +218,9 @@ def searchAndReplaceBuildSbtSnapshot(Version version) {
 def searchAndReplacePackageJsonSnapshot(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+      sh "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]\"[0-9.]+)0-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
+      sh "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }

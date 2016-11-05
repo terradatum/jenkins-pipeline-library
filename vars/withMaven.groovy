@@ -15,6 +15,7 @@ def call(body) {
   String args = config.args
   String jdkName = config.jdkName
   String mavenName = config.mavenName
+  List environment = config.environment
 
   // We're wrapping this in a timeout - if it takes more than 180 minutes, kill it.
   timeout(time: 180, unit: 'MINUTES') {
@@ -25,6 +26,7 @@ def call(body) {
       envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "MAVEN_OPTS=-Xmx1536m -Xms512m"]
       jdkToolName = jdkName
       mavenToolName = mavenName
+      envVars = environment
       // Actually run Maven!
       // The -Dmaven.repo.local=${pwd()}/.repository means that Maven will create a
       // .repository directory at the in the "git repository" root of the build (which it gets from the
