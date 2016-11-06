@@ -24,7 +24,9 @@ def call(body) {
       envVars = environment
       // Actually run npm!
       cmd = {
-        sh "npm ${args}"
+        wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+          sh "npm ${args}"
+        }
       }
     }
   }

@@ -24,7 +24,9 @@ def call(body) {
       envVars = environment
       // Actually run groovy!
       cmd = {
-        sh "gulp ${args}"
+        wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+          sh "gulp ${args}"
+        }
       }
     }
   }
