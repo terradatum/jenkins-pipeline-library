@@ -4,7 +4,7 @@ import com.terradatum.jenkins.workflow.TerradatumCommands
  * @author rbellamy@terradatum.com 
  * @date 8/30/16
  */
-static def call() {
+def call() {
   def flow = new TerradatumCommands()
 
   flow.dockerSudoAndLogin()
