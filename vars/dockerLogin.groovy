@@ -13,7 +13,5 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
-  Boolean useSudo = config.useSudo
-
-  flow.dockerLogin(useSudo)
+  flow.dockerSudoAndLogin()
 }
