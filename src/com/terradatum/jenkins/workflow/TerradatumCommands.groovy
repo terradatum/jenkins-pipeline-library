@@ -270,12 +270,28 @@ def void dockerLogin() {
   shell "${dockerLogin}"
 }
 
-def void shell(String script) {
-  sh "source /var/lib/jenkins/.bashrc && ${script}"
+def String shell(String script, String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
+  sh("source /var/lib/jenkins/.bashrc && ${script}", encoding, returnStatus, returnStdout)
 }
 
-def String shell(Boolean returnStdout, String script) {
-  return sh(returnStdout, "source /var/lib/jenkins/.bashrc && ${script}")
+def String shell(Map args) {
+    String script = ''
+    String encoding = 'UTF-8'
+    boolean returnStatus = false
+    boolean returnStdout = false
+    if (args.script) {
+        script = args.script as String
+    }
+    if (args.encoding) {
+        encoding = args.encoding as String
+    }
+    if (args.returnStatus) {
+        returnStatus = args.returnStatus as boolean
+    }
+    if (args.returnStdout) {
+        returnStdout = args.returnStdout as boolean
+    }
+    shell(script, encoding, returnStatus, returnStdout)
 }
 
 /*
