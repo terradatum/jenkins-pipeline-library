@@ -271,7 +271,7 @@ def void dockerLogin() {
 }
 
 def String shell(String script, String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
-  sh(script: "source /var/lib/jenkins/.bashrc\n${script}", encoding: encoding, returnStatus: returnStatus, returnStdout: returnStdout)
+  sh(script: "#!/bin/bash\nsource /var/lib/jenkins/.bashrc\n${script}", encoding: encoding, returnStatus: returnStatus, returnStdout: returnStdout)
 }
 
 def String shell(Map args) {
