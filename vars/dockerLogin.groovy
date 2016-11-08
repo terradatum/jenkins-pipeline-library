@@ -1,10 +1,9 @@
 #!/usr/bin/env groovy
 import com.terradatum.jenkins.workflow.TerradatumCommands
 /**
- * @author rbellamy@terradatum.com 
- * @date 8/30/16
+ * @author rbellamy@terradatum.com
  */
-def call() {
+def call(void something) {
   def flow = new TerradatumCommands()
 
   flow.dockerLogin()

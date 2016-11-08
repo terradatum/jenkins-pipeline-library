@@ -31,25 +31,24 @@ static def String getPathFromJenkinsFullName(String fullName) {
   Jenkins.instance.getItemByFullName(fullName).rootDir
 }
 
-def removeTrailingSlash (String myString){
+def removeTrailingSlash(String myString){
   if (myString.endsWith("/")) {
     return myString.substring(0, myString.length() - 1);
   }
   return myString
 }
 
-def getNexusLatestVersion(String artifact) {
-  String latest = getNexusVersions(artifact).latest
+def getNexusLatestVersion(String repo, String artifact) {
+  String latest = getNexusVersions(repo, artifact).latest
   return Version.valueOf(latest)
 }
 
-def getNexusReleaseVersion(String artifact) {
-  String release = getNexusVersions(artifact).release
+def getNexusReleaseVersion(String repo, String artifact) {
+  String release = getNexusVersions(repo, artifact).release
   return Version.valueOf(release)
 }
 
-def getNexusVersions(String artifact) {
-  def repo = 'https://nexus.terradatum.com/content/groups/public/com/terradatum'
+def getNexusVersions(String repo, String artifact) {
   artifact = removeTrailingSlash(artifact)
 
   def metadataUrl = "${repo}/${artifact}/maven-metadata.xml"
@@ -62,9 +61,9 @@ def getNexusVersions(String artifact) {
   }
 }
 
-def getMaxNexusVersion(String project, String artifact, Version version) {
+def getMaxNexusVersion(String repo, String project, String artifact, Version version) {
   lock("${project}/maxNexusVersion") {
-    List<Node> nexusVersions = getNexusVersions(artifact).version
+    List<Node> nexusVersions = getNexusVersions(repo, artifact).version
     List<Version> versions = new ArrayList<>()
     for (int i = 0; i < nexusVersions.size(); i++) {
       Node nexusVersionNode = nexusVersions[i]

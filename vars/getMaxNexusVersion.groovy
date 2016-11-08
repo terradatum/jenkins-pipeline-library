@@ -15,11 +15,12 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
+  String repo = config.repo
   String project = config.project
   String artifact = config.artifact
   Version version = config.version
 
-  Version maxNexusVersion = flow.getMaxNexusVersion(project, artifact, version) as Version
+  Version maxNexusVersion = flow.getMaxNexusVersion(repo, project, artifact, version) as Version
 
   echo "Max Nexus version: ${maxNexusVersion}"
 
