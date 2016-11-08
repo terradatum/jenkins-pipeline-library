@@ -150,7 +150,7 @@ def getProjectVersionString(ProjectType projectType) {
 }
 
 def getBuildMetadataVersion(Version version) {
-  String commit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+  String commit = shell(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
   version.setBuildMetadata(commit)
 }
 
@@ -158,7 +158,7 @@ def getTagVersion(Version version) {
 
   // if the repo has no tags this command will fail
   // if this command fails, and there is no config version, rethrow the error
-  gitVersion = sh(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
+  gitVersion = shell(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
 
   if (tag == null || tag.size() == 0){
     echo "No existing tag found. Using version: ${version}"
@@ -198,9 +198,9 @@ def setCurrentVersion(String project, Version version) {
 def searchAndReplacePomXmlRevision(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
+      shell "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
     } else {
-      sh "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
+      shell "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}/g' \"{}\" \\;"
     }
   }
 }
@@ -208,9 +208,9 @@ def searchAndReplacePomXmlRevision(Version version) {
 def searchAndReplaceBuildSbtSnapshot(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      sh "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
@@ -218,58 +218,65 @@ def searchAndReplaceBuildSbtSnapshot(Version version) {
 def searchAndReplacePackageJsonSnapshot(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      sh "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      sh "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
 
 def void gitMerge(String targetBranch, String sourceBranch) {
   sshagent(['devops_deploy_DEV']) {
-    sh "git checkout ${targetBranch}"
-    sh "git merge origin/${sourceBranch}"
+    shell "git checkout ${targetBranch}"
+    shell "git merge origin/${sourceBranch}"
   }
 }
 
 def void gitConfig(String project) {
-  sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
-  sh 'git config user.email sysadmin@terradatum.com'
-  sh 'git config user.name terradatum-automation'
-  sh "git remote set-url origin git@github.com:${project}"
+  shell 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
+  shell 'git config user.email sysadmin@terradatum.com'
+  shell 'git config user.name terradatum-automation'
+  shell "git remote set-url origin git@github.com:${project}"
 }
 
 def void gitTag(Version releaseVersion) {
   sshagent(['devops_deploy_DEV']) {
-    sh 'git tag -d \$(git tag)'
-    sh 'git fetch --tags'
+    shell 'git tag -d \$(git tag)'
+    shell 'git fetch --tags'
     echo "New release version ${releaseVersion.normalVersion}"
-    sh "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
+    shell "git tag -fa ${releaseVersion.normalVersion} -m 'Release version ${releaseVersion.normalVersion}'"
   }
 }
 
 def void gitPush(String targetBranch) {
   sshagent(['devops_deploy_DEV']) {
-    sh "git push origin ${targetBranch}"
-    sh "git push --tags"
+    shell "git push origin ${targetBranch}"
+    shell "git push --tags"
   }
 }
 
 def void gitCheckout(String targetBranch) {
   sshagent(['devops_deploy_DEV']) {
-    sh "git checkout ${targetBranch}"
-    sh 'git pull'
+    shell "git checkout ${targetBranch}"
+    shell 'git pull'
   }
 }
 
 def void gitResetBranch() {
-  sh 'git checkout -- .'
+  shell 'git checkout -- .'
 }
 
-def void dockerSudoAndLogin() {
-  sh 'alias docker="sudo /usr/bin/docker"'
-  def dockerLogin = sh(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
-  sh "${dockerLogin}"
+def void dockerLogin() {
+  String dockerLogin = shell(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
+  shell "${dockerLogin}"
+}
+
+def void shell(String script) {
+  sh "source /var/lib/jenkins/.bashrc && ${script}"
+}
+
+def String shell(Boolean returnStdout, String script) {
+  return sh(returnStdout, "source /var/lib/jenkins/.bashrc && ${script}")
 }
 
 /*

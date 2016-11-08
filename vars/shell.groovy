@@ -4,8 +4,11 @@ import com.terradatum.jenkins.workflow.TerradatumCommands
  * @author rbellamy@terradatum.com 
  * @date 8/30/16
  */
-def call() {
+def String call(Boolean returnStdout = false, String script) {
   def flow = new TerradatumCommands()
 
-  flow.dockerSudoAndLogin()
+  if (returnStdout) {
+    return flow.shell(returnStdout, script)
+  }
+  return flow.shell(script)
 }

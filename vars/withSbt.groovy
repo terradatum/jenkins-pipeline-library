@@ -43,7 +43,7 @@ def call(body) {
             configFile(fileId: '2fc34265-9616-4e2d-a268-078880a33cee', targetLocation: "${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion}/plugins/credentials.sbt") // credentials plugin
         ]) {
           wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-            sh "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -sbt-boot ${pwd()}/../.sbt/boot -Dsbt.boot.properties=${pwd()}/../.sbt/boot.properties ${args}"
+            shell "sbt -batch -ivy ${pwd()}/../.ivy2 -sbt-dir ${pwd()}/../.sbt/${sbtToolVersion.majorVersion}.${sbtToolVersion.minorVersion} -sbt-boot ${pwd()}/../.sbt/boot -Dsbt.boot.properties=${pwd()}/../.sbt/boot.properties ${args}"
           }
         }
       }
