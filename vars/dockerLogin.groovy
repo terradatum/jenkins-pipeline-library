@@ -3,7 +3,7 @@ import com.terradatum.jenkins.workflow.TerradatumCommands
 /**
  * @author rbellamy@terradatum.com
  */
-def call(void something) {
+def call() {
   def flow = new TerradatumCommands()
 
   flow.dockerLogin()
