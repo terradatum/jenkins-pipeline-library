@@ -272,7 +272,7 @@ def void dockerLogin() {
 }
 
 def String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
-  if (fileExists(sourceFile)) {
+  if (sourceFile != '' && fileExists(sourceFile)) {
     echo "Sourcing ${sourceFile} in bash script..."
     script = """
 #!/bin/bash
