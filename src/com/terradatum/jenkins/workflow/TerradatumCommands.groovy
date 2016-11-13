@@ -268,7 +268,7 @@ def void gitResetBranch() {
 
 def void dockerLogin() {
   String dockerLogin = shell(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
-  shell "${dockerLogin}"
+  shell "sudo ${dockerLogin}"
 }
 
 def String shell(String script, String sourceFile = '/var/lib/jenkins/.bashrc', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
