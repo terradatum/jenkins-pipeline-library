@@ -6,6 +6,7 @@ import groovy.json.JsonSlurper
 import groovy.json.internal.LazyMap
 import groovy.util.slurpersupport.Node
 import jenkins.model.Jenkins
+
 /*
  * version processing
  */
@@ -31,7 +32,7 @@ static def String getPathFromJenkinsFullName(String fullName) {
   Jenkins.instance.getItemByFullName(fullName).rootDir
 }
 
-def removeTrailingSlash(String myString){
+def removeTrailingSlash(String myString) {
   if (myString.endsWith("/")) {
     return myString.substring(0, myString.length() - 1);
   }
@@ -159,7 +160,7 @@ def getTagVersion(Version version) {
   // if this command fails, and there is no config version, rethrow the error
   gitVersion = shell(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
 
-  if (tag == null || tag.size() == 0){
+  if (tag == null || tag.size() == 0) {
     echo "No existing tag found. Using version: ${version}"
     return version
   }
@@ -270,28 +271,45 @@ def void dockerLogin() {
   shell "${dockerLogin}"
 }
 
-def String shell(String script, String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
-  sh(script: "#!/bin/bash\nsource /var/lib/jenkins/.bashrc\n${script}", encoding: encoding, returnStatus: returnStatus, returnStdout: returnStdout)
+def String shell(String script, String sourceFile = '/var/lib/jenkins/.bashrc', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
+  if (fileExists(sourceFile)) {
+    sh(script:
+        """#!/bin/bash
+source ${sourceFile}
+${script}""",
+        encoding: encoding,
+        returnStatus: returnStatus,
+        returnStdout: returnStdout)
+  } else {
+    sh(script: "${script}",
+        encoding: encoding,
+        returnStatus: returnStatus,
+        returnStdout: returnStdout)
+  }
 }
 
 def String shell(Map args) {
-    String script = ''
-    String encoding = 'UTF-8'
-    boolean returnStatus = false
-    boolean returnStdout = false
-    if (args.script) {
-        script = args.script as String
-    }
-    if (args.encoding) {
-        encoding = args.encoding as String
-    }
-    if (args.returnStatus) {
-        returnStatus = args.returnStatus as boolean
-    }
-    if (args.returnStdout) {
-        returnStdout = args.returnStdout as boolean
-    }
-    shell(script, encoding, returnStatus, returnStdout)
+  String script = ''
+  String sourceFile = '/var/lib/jenkins/.bashrc'
+  String encoding = 'UTF-8'
+  boolean returnStatus = false
+  boolean returnStdout = false
+  if (args.script) {
+    script = args.script as String
+  }
+  if (args.sourceFile) {
+    sourceFile = args.sourceFile
+  }
+  if (args.encoding) {
+    encoding = args.encoding as String
+  }
+  if (args.returnStatus) {
+    returnStatus = args.returnStatus as boolean
+  }
+  if (args.returnStdout) {
+    returnStdout = args.returnStdout as boolean
+  }
+  shell(script, sourceFile, encoding, returnStatus, returnStdout)
 }
 
 /*
