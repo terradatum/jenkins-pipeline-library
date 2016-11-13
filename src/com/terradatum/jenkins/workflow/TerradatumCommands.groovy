@@ -271,12 +271,16 @@ def void dockerLogin() {
   shell "sudo ${dockerLogin}"
 }
 
-def String shell(String script, String sourceFile = '/var/lib/jenkins/.bashrc', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
+def String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
   if (fileExists(sourceFile)) {
-    sh(script:
-        """#!/bin/bash
+    echo "Sourcing ${sourceFile} in bash script..."
+    script = """
+#!/bin/bash
 source ${sourceFile}
-${script}""",
+${script}
+"""
+    sh(script:
+        script,
         encoding: encoding,
         returnStatus: returnStatus,
         returnStdout: returnStdout)
@@ -290,7 +294,7 @@ ${script}""",
 
 def String shell(Map args) {
   String script = ''
-  String sourceFile = '/var/lib/jenkins/.bashrc'
+  String sourceFile = ''
   String encoding = 'UTF-8'
   boolean returnStatus = false
   boolean returnStdout = false
