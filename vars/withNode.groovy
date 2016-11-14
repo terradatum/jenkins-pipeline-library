@@ -1,8 +1,8 @@
 /**
  * @author rbellamy@terradatum.com
- * @date 8/23/16
+ * @date 11/4/16
  *
- * This method sets up the Maven and JDK tools, along with whatever other arbitrary environment
+ * This method sets up the Node tools, along with whatever other arbitrary environment
  * variables we passed in, and runs the body we passed in within that environment.
  */
 def call(body) {

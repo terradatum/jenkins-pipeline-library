@@ -4,7 +4,7 @@ import com.terradatum.jenkins.workflow.Version
  * @author rbellamy@terradatum.com 
  * @date 8/23/16
  *
- * This method sets up the Maven and JDK tools, along with whatever other arbitrary environment
+ * This method sets up the SBT and JDK tools, along with whatever other arbitrary environment
  * variables we passed in, and runs the body we passed in within that environment.
  */
 def call(body) {
