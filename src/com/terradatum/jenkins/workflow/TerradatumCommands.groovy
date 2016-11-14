@@ -274,9 +274,19 @@ def void dockerLogin() {
 def String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
   if (sourceFile != '' && fileExists(sourceFile)) {
     echo "Sourcing ${sourceFile} in bash script..."
-    sh("#!/bin/bash -xe\nsource ${sourceFile}\n${script}\n", encoding, returnStatus, returnStdout)
+    sh(
+        script: "source ${sourceFile}\n${script}\n",
+        encoding: encoding,
+        returnStatus: returnStatus,
+        returnStdout: returnStdout
+    )
   } else {
-    sh(script, encoding, returnStatus, returnStdout)
+    sh(
+        script: script,
+        encoding: encoding,
+        returnStatus: returnStatus,
+        returnStdout: returnStdout
+    )
   }
 }
 
