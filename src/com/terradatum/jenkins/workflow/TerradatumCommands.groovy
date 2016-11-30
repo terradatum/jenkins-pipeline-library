@@ -205,12 +205,16 @@ def searchAndReplacePomXmlRevision(Version version) {
   }
 }
 
+def updateSbtDependencies(String projectPart) {
+  shell "find . -type f -name '*.sbt' -exec sed -i -r 's/(${projectPart}.*[ \\t]*%[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1\\+\"/g' \"{}\" \\;"
+}
+
 def searchAndReplaceBuildSbtSnapshot(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
