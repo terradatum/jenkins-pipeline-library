@@ -195,7 +195,7 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
-def searchAndReplacePomXmlRevision(Version version) {
+def updatePomXmlRevisionWithVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
       shell "find -type f -name 'pom.xml' -exec sed -i -r 's/\\\$\\{revision\\}/${version.patchVersion}\\+${version.buildMetadata}/g' \"{}\" \\;"
@@ -209,7 +209,7 @@ def updateSbtDependencies(String projectPart) {
   shell "find . -type f -name '*.sbt' -exec sed -i -r 's/(${projectPart}.*[ \\t]*%[ \\t]\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1\\+\"/g' \"{}\" \\;"
 }
 
-def searchAndReplaceBuildSbtSnapshot(Version version) {
+def updateBuildSbtSnapshotToVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
       shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
@@ -219,7 +219,7 @@ def searchAndReplaceBuildSbtSnapshot(Version version) {
   }
 }
 
-def searchAndReplacePackageJsonSnapshot(Version version) {
+def updatePackageJsonSnapshotWithVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
       shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"

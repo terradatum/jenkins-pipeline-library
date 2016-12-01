@@ -18,7 +18,7 @@ def call(body) {
   Version version = config.version
   Closure cmds = config.cmds
 
-  flow.searchAndReplacePomXmlRevision(version)
+  flow.updatePomXmlRevisionWithVersion(version)
   cmds.call()
   flow.gitResetBranch()
 }
