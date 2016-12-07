@@ -15,8 +15,13 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
+  String projectPart = config.projectPart
   Version version = config.version
   Closure cmds = config.cmds
+
+  if (projectPart) {
+    flow.updatePackageJsonDockerBuildVersion(projectPart, version)
+  }
 
   flow.updatePackageJsonSnapshotWithVersion(version)
   cmds.call()

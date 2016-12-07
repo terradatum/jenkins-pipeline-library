@@ -219,12 +219,16 @@ def updateBuildSbtSnapshotToVersion(Version version) {
   }
 }
 
+def updatePackageJsonDockerBuildVersion(String projectPart, Version version) {
+  shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(${projectPart}:[0-9.]+)[0-9]-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
+}
+
 def updatePackageJsonSnapshotWithVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
@@ -294,6 +298,10 @@ def String shell(String script, String sourceFile = '', String encoding = 'UTF-8
   }
 }
 
+/*
+ * NonCPS - non-serializable methods
+ */
+// read full text from file
 def String shell(Map args) {
   String script = ''
   String sourceFile = ''
@@ -318,17 +326,13 @@ def String shell(Map args) {
   shell(script, sourceFile, encoding, returnStatus, returnStdout)
 }
 
-/*
- * NonCPS - non-serializable methods
- */
-// read full text from file
+// overwrite file with text
 @NonCPS
 static def String getStringInFile(String path) {
   def file = new File(path)
   file.exists() ? file.text : ''
 }
 
-// overwrite file with text
 @NonCPS
 static def void setStringInFile(String path, String value) {
   new File(path).newWriter().withWriter { w ->
