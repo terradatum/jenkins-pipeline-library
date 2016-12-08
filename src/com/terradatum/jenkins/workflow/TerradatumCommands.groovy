@@ -233,6 +233,28 @@ def updatePackageJsonSnapshotWithVersion(Version version) {
   }
 }
 
+def void triggerDownstreamBuild(List<String> projectPaths) {
+  // The pattern to look for when deciding which downstream build to skip: >>>!aergo-common!<<<
+  String skipPattern = />>>!([a-zA-Z\-]*)!<<</
+  // Look commit log for the last pull - back no further! If any of the commit messages contain the "skip" pattern, then
+  // the downstream build of that name will be skipped
+  String pullLog = flow.gitPullLog()
+  List<String> skipList
+  if (pullLog) {
+    skipList = (pullLog =~ skipPattern).collect{ all, project -> project }
+  }
+
+  if (projectPaths && projectPaths.size() > 0) {
+    projectPaths.each { projectPath ->
+      // assumes in the form of "../aergo-common/master" or some other Jenkins path
+      def project = projectPath.tokenize('/')[-2]
+      if (skipList.size() == 0 && !skipList.contains(project)) {
+        build(job: project, propagate: false, quietPeriod: 120)
+      }
+    }
+  }
+}
+
 def void gitMerge(String targetBranch, String sourceBranch) {
   sshagent(['devops_deploy_DEV']) {
     shell "git checkout ${targetBranch}"
@@ -272,6 +294,10 @@ def void gitCheckout(String targetBranch) {
 
 def void gitResetBranch() {
   shell 'git checkout -- .'
+}
+
+def String gitPullLog() {
+  pullLog = shell(returnStdout: true, script: 'git log ORIG_HEAD..').trim()
 }
 
 def void dockerLogin() {
