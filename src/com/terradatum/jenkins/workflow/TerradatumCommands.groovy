@@ -248,8 +248,11 @@ def void triggerDownstreamBuild(List<String> projectPaths) {
     projectPaths.each { projectPath ->
       // assumes in the form of "../aergo-common/master" or some other Jenkins path
       def project = projectPath.tokenize('/')[-2]
+      stage "trigger ${project} build"
       if (skipList.size() == 0 && !skipList.contains(project)) {
         build(job: project, propagate: false, quietPeriod: 120)
+      } else {
+        echo "...skipping ${project} build"
       }
     }
   }
