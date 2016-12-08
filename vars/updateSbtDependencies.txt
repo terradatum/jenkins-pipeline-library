@@ -16,7 +16,7 @@
     </li>
     <li>
         <p>
-        if specified, . Used as the first part of a sed regex pattern:
+        if specified, used as the first part of a sed regex pattern:
             <code>
                 find . -type f -name '*.sbt' -exec sed -i -r 's/(${projectPart}.*[ t]*%[ t]"[0-9.]+)[0-9]-SNAPSHOT"/1+"/g' "{}" ;
             </code>

@@ -2,6 +2,6 @@
 
 <p>Uses AWS API to collect the ECR login information needed by subsequent docker commands.</p>
 <p>
-Calls <code>aws ecr get-login --region us-west-1<code> and runs the results as root to update the docker login credentials
+Calls <code>aws ecr get-login --region us-west-1</code> and runs the results as root to update the docker login credentials
 for subsequent push/pull operations against our Elastic Container Repository service in AWS.
 </p>
