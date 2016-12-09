@@ -1,0 +1,37 @@
+<strong><p>triggerDowstreamBuilds {</p>
+  <p>projectPaths</p>
+<p>}</p></strong>
+<p>Example:</p>
+<p><code>
+    triggerDownstreamBuilds {
+      projectPaths = ['../aergo-vintage-dao/master', '../aergo-server/master']
+    }
+</code></p>
+<p>
+    Triggers downstream builds based on the array of project paths. Skips builds those builds depending on the last set
+    of commit messages. Specifically the log of messages produced by <code>git log ORIG_HEAD..</code> are inspected, and
+    if any of those commit messages contain the tokens <code>&lt;&lt;&lt;!PROJECT NAME!&gt;&gt;&gt;</code>, then <code>
+    PROJECT NAME</code> will be skipped if it's in the list of downstream builds.
+</p>
+<p>
+<strong><code>List<String> projectPaths</code></strong> is required:
+<ul>
+    <li>
+        <p>if not specified, the code does nothing.</p>
+    </li>
+    <li>
+        <p>
+            if specified, the code iterates the list and starts a build with the following parameters:
+                <code>
+                    build(job: projectPath, propagate: false, quietPeriod: 120)
+                </code>
+        </p>
+        <p>examples:<ul>
+            <li>['../aergo-server/master']</li>
+            <li>['../aergo-server/master', '../aergo-etl/master']</li>
+        </ul></p>
+    </li>
+</ul>
+The result of this is that any dowstream build that isn't explicitly placed on the skip list via a git commit message will
+be built.
+</p>

@@ -5,14 +5,10 @@
 
 <p>Updates all dependencies in SBT files in the project, based on the projectPart or projectParts</p>
 <p>
-<code>String projectPart</code> is optional:
+<strong><code>String projectPart</code></strong> is optional:
 <ul>
     <li>
         <p>if not specified, the code looks for the <code>projectParts</code> parameter</p>
-        <p>examples:<ul>
-            <li>'aergo'</li>
-            <li>'(aergo|sbt-docker-helper)'</li>
-        </ul></p>
     </li>
     <li>
         <p>
@@ -21,16 +17,23 @@
                 find . -type f -name '*.sbt' -exec sed -i -r 's/(${projectPart}.*[ t]*%[ t]"[0-9.]+)[0-9]-SNAPSHOT"/1+"/g' "{}" ;
             </code>
         </p>
+        <p>examples:<ul>
+            <li>'aergo'</li>
+            <li>'(aergo|sbt-docker-helper)'</li>
+        </ul></p>
     </li>
 </ul>
 The result of this is that any dependency of version <code>X.Y.Z-SNAPSHOT</code> that matches the above regex will be
 updated to a version range of <code>X.Y.+</code>.
 </p>
 <p>
-<code>List<String> projectParts</code> is optional:
+<strong><code>List<String> projectParts</code></strong> is optional:
 <ul>
     <li>
         <p>if not specified, and <code>projectPart</code> is not specified, the code does nothing.</p>
+    </li>
+    <li>
+        <p>if specified, the code iterates through this list and uses it in repeated sed regex replacements.
         <p>examples:<ul>
             <li>['aergo']</li>
             <li>['aergo', 'sbt-docker-helper']</li>

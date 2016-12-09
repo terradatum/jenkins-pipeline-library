@@ -250,7 +250,7 @@ def void triggerDownstreamBuild(List<String> projectPaths) {
       def project = projectPath.tokenize('/')[-2]
       stage "trigger ${project} build"
       if (!skipList || skipList.size() == 0 || !skipList.contains(project)) {
-        build(job: project, propagate: false, quietPeriod: 120)
+        build(job: projectPath, propagate: false, quietPeriod: 120)
       } else {
         echo "...skipping ${project} build"
       }

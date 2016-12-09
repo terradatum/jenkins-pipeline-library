@@ -16,12 +16,15 @@ def call() {
   def flow = new TerradatumCommands()
 
   if (projectPart) {
-    if (projectParts) {
-      projectParts.add(projectPart)
+    if (!projectParts) {
+      projectParts = new ArrayList<>()
     }
+    projectParts.add(projectPart)
   }
 
-  projectParts.each { p ->
-    flow.updateSbtDependencies(p)
+  if (projectParts) {
+    projectParts.each { p ->
+      flow.updateSbtDependencies(p)
+    }
   }
 }
