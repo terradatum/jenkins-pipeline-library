@@ -238,7 +238,7 @@ def void triggerDownstreamBuild(List<String> projectPaths) {
   String skipPattern = />>>!([a-zA-Z\-]*)!<<</
   // Look commit log for the last pull - back no further! If any of the commit messages contain the "skip" pattern, then
   // the downstream build of that name will be skipped
-  String pullLog = flow.gitPullLog()
+  String pullLog = gitPullLog()
   List<String> skipList
   if (pullLog) {
     skipList = (pullLog =~ skipPattern).collect{ all, project -> project }
