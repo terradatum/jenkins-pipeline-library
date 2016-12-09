@@ -15,15 +15,22 @@ def call(body) {
 
   def flow = new TerradatumCommands()
 
-  String part = config.projectPart
-  List<String> parts = config.projectParts
+  String projectPart = config.projectPart
+  List<String> projectParts = config.projectParts
   Version version = config.version
   Closure cmds = config.cmds
 
-  //noinspection GroovyAssignabilityCheck
-  updateSbtDependencies {
-    projectPart = part
-    projectParts = parts
+  if (projectPart) {
+    if (!projectParts) {
+      projectParts = new ArrayList<>()
+    }
+    projectParts.add(projectPart)
+  }
+
+  if (projectParts) {
+    projectParts.each { p ->
+      flow.updateSbtDependencies(p)
+    }
   }
 
   flow.updateBuildSbtSnapshotToVersion(version)
