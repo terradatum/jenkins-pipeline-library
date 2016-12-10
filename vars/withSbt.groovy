@@ -29,7 +29,6 @@ def call(body) {
       // envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "SBT_OPTS=-Xmx1536m -Xms512m"]
       sbtNameParts = sbtName.tokenize("-") // can be any of sbt-X.Y.Z
       jdkToolName = jdkName
-      sbtToolName = 'sbt' // sbt
       envVars = environment
       sbtToolVersion = Version.valueOf(sbtNameParts[1]) // X.Y.Z
       // Actually run SBT!
