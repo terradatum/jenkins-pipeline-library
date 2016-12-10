@@ -1,0 +1,44 @@
+<strong><p>withSbt {</p>
+  <p>args</p>
+  <p>jdkName</p>
+  <p>sbtName</p>
+  <p>environment</p>
+<p>}</p></strong>
+<p>Example:</p>
+<p><code>
+  withSBt {
+    args = 'compile'
+    jdkName = 'jdk-1.8.0_25'
+    sbtName = 'sbt-0.13.12'
+    environment = ['JVM_OPTS=-Xmss4M']
+  }
+</code></p>
+<p>Uses <code>withSbtEnv</code> to execute SBT commands, with the specified JDK and environment.</p>
+<p>
+<strong><code>String args</code></strong> is optional. Will run the default task if not included.
+<strong><code>String jdkName</code></strong> is required. The Jenkins Global Tool JDK name.
+<strong><code>String sbtName</code></strong> is required. Used to derive the desired SBT version.
+<strong><code>List<String> environment</code></strong> is optional. Used to enhance the build environment during execution of SBT.
+</p>
+<p>
+    Normally <code>sbtName</code> would be used to target a specific version of a Jenkins Global Tool. In this case,
+    it will always use the Global Tool Name of "sbt", which has been provisioned to pull the
+    <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt"><code>sbt-extras</code></a> script from GitHub at each
+    build. The version number is required for the further provisioning of global plugins and credentials handling. The
+    version is used to target the SBT <code>.sbt/X.Y</code> directory by the <code>configFileProvider</code>
+</p>
+<p>
+    This works so well because the <code>sbt-extras</code> script takes care of automatically determining the correct
+    version of SBT and Scala, and downloading them if necessary.
+</p>
+<p><strong>Example log:</strong></p>
+<p><code>
+    provisoning config files...
+    copy managed file [SbtCredentials] to file:/var/lib/jenkins/workspace/.sbt/.credentials
+    copy managed file [SbtBootProperties] to file:/var/lib/jenkins/workspace/.sbt/boot.properties
+    copy managed file [SbtGlobalPublish] to file:/var/lib/jenkins/workspace/.sbt/0.13/global.sbt
+    copy managed file [SbtGlobalCredentialsPlugin] to file:/var/lib/jenkins/workspace/.sbt/0.13/plugins/credentials.sbt
+    ...
+    Running shell script
+    + sbt -batch -ivy /var/lib/jenkins/workspace/project/../.ivy2 -sbt-dir /var/lib/jenkins/workspace/project/../.sbt/0.13 -sbt-boot /var/lib/jenkins/workspace/project/../.sbt/boot -Dsbt.boot.properties=/var/lib/jenkins/workspace/project/../.sbt/boot.properties compile
+</code></p>
