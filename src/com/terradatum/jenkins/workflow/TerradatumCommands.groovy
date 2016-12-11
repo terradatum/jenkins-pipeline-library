@@ -239,10 +239,10 @@ def void triggerDownstreamBuild(List<String> projectPaths) {
   // Look commit log for the last pull - back no further! If any of the commit messages contain the "skip" pattern, then
   // the downstream build of that name will be skipped
   String pullLog = gitPullLog()
-  echo """>>>Evaluated git log for skiplist<<<
-${pullLog}"""
   List<String> skipList
   if (pullLog) {
+    echo """>>>Evaluated git log for skiplist<<<
+${pullLog}"""
     skipList = (pullLog =~ skipPattern).collect{ all, project -> project }
   }
 
