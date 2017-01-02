@@ -9,14 +9,13 @@ def call(body) {
   body.delegate = config
   body()
 
-  String sbtToolName = config.sbtToolName
   String jdkToolName = config.jdkToolName
   List envVars = config.envVars
   Closure sbt = config.sbt
 
   // Using the "tool" Workflow call automatically installs those tools on the
   // node.
-  String sbtTool = tool name: sbtToolName, type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
+  String sbtTool = tool name: 'sbt', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
   String jdkTool = tool name: jdkToolName, type: 'hudson.model.JDK'
 
   // Set JAVA_HOME, SBT_HOME and special PATH variables for the tools we're using.

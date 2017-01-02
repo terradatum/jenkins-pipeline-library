@@ -1,0 +1,32 @@
+<strong><p>withBuildSbtSnapshot {</p>
+  <p>projectPart</p>
+  <p>projectParts</p>
+  <p>version</p>
+  <p>cmds</p>
+<p>}</p></strong>
+<p>Example:</p>
+<p><code>
+  withBuildSbtSnapshot {
+    projectPart = 'aergo'
+    version = versionWithBuildMetadata
+    cmds = {
+      compileAndTest()
+    }
+  }
+</code></p>
+<p>Updates the version of the project and its dependencies, executes the commands, and resets the git working copy</p>
+<p>
+<strong><code>List<String> projectPart</code></strong> is optional. See <code>updateSbtDependencies</code>
+<strong><code>List<String> projectParts</code></strong> is optional. See <code>updateSbtDependencies</code>
+<strong><code>Version version</code></strong> is required. Used to set the project version.
+<strong><code>Closure cmds</code></strong> is required. Commands to execute.
+</p>
+<p>
+    Replaces current <code>build.sbt</code> version with the <code>versionBuildMetadata</code> value, if and only if the
+    version in the SBT file is a SNAPSHOT. If a <code>projectPart</code> and/or <code>projectParts</code> is passed in,
+    then the <code>updateSbtDependencies</code> DSL command is also called.
+</p>
+<p>
+    Once the SBT files have had their project and dependency versions updated, the commands in the <code>cmd</code> closure
+    are executed, one after the other. Once they complete, the git working copy is reset.
+</p>

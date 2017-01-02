@@ -11,7 +11,20 @@ def call() {
   body()
 
   String projectPart = config.projectPart
+  List<String> projectParts = config.projectParts
+
   def flow = new TerradatumCommands()
 
-  flow.updateSbtDependencies(projectPart)
+  if (projectPart) {
+    if (!projectParts) {
+      projectParts = new ArrayList<>()
+    }
+    projectParts.add(projectPart)
+  }
+
+  if (projectParts) {
+    projectParts.each { p ->
+      flow.updateSbtDependencies(p)
+    }
+  }
 }

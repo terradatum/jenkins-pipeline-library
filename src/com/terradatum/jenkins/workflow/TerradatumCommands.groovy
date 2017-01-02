@@ -219,12 +219,43 @@ def updateBuildSbtSnapshotToVersion(Version version) {
   }
 }
 
+def updatePackageJsonDockerBuildVersion(String projectPart, Version version) {
+  shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(${projectPart}:[0-9.]+)[0-9]-SNAPSHOT/\\1${version.patchVersion}/g' \"{}\" \\;"
+}
+
 def updatePackageJsonSnapshotWithVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      shell "find \\( -path \"./_build\" -o -path \"./_dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find \\( -path \"./dist\" -o -path \"./node_modules\" \\) -prune -o -name \"package.json\" -exec sed -i -r 's/(\"version\"[ \\t]*:[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+    }
+  }
+}
+
+def void triggerDownstreamBuild(List<String> projectPaths) {
+  // The pattern to look for when deciding which downstream build to skip: >>>!aergo-common!<<<
+  String skipPattern = />>>!([a-zA-Z\-]*)!<<</
+  // Look commit log for the last pull - back no further! If any of the commit messages contain the "skip" pattern, then
+  // the downstream build of that name will be skipped
+  String pullLog = gitPullLog()
+  List<String> skipList
+  if (pullLog) {
+    echo """>>>Evaluated git log for skiplist<<<
+${pullLog}"""
+    skipList = (pullLog =~ skipPattern).collect{ all, project -> project }
+  }
+
+  if (projectPaths && projectPaths.size() > 0) {
+    projectPaths.each { projectPath ->
+      // assumes in the form of "../aergo-common/master" or some other Jenkins path
+      def project = projectPath.tokenize('/')[-2]
+      stage "trigger ${project} build"
+      if (!skipList || skipList.size() == 0 || !skipList.contains(project)) {
+        build(job: projectPath, propagate: false, quietPeriod: 120)
+      } else {
+        echo "...skipping ${project} build"
+      }
     }
   }
 }
@@ -270,6 +301,10 @@ def void gitResetBranch() {
   shell 'git checkout -- .'
 }
 
+def String gitPullLog() {
+  pullLog = shell(returnStdout: true, script: 'git log ORIG_HEAD..').trim()
+}
+
 def void dockerLogin() {
   String dockerLogin = shell(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
   shell "sudo ${dockerLogin}"
@@ -294,6 +329,10 @@ def String shell(String script, String sourceFile = '', String encoding = 'UTF-8
   }
 }
 
+/*
+ * NonCPS - non-serializable methods
+ */
+// read full text from file
 def String shell(Map args) {
   String script = ''
   String sourceFile = ''
@@ -318,17 +357,13 @@ def String shell(Map args) {
   shell(script, sourceFile, encoding, returnStatus, returnStdout)
 }
 
-/*
- * NonCPS - non-serializable methods
- */
-// read full text from file
+// overwrite file with text
 @NonCPS
 static def String getStringInFile(String path) {
   def file = new File(path)
   file.exists() ? file.text : ''
 }
 
-// overwrite file with text
 @NonCPS
 static def void setStringInFile(String path, String value) {
   new File(path).newWriter().withWriter { w ->

@@ -16,12 +16,23 @@ def call(body) {
   def flow = new TerradatumCommands()
 
   String projectPart = config.projectPart
+  List<String> projectParts = config.projectParts
   Version version = config.version
   Closure cmds = config.cmds
 
   if (projectPart) {
-    flow.updateSbtDependencies(projectPart)
+    if (!projectParts) {
+      projectParts = new ArrayList<>()
+    }
+    projectParts.add(projectPart)
   }
+
+  if (projectParts) {
+    projectParts.each { p ->
+      flow.updateSbtDependencies(p)
+    }
+  }
+
   flow.updateBuildSbtSnapshotToVersion(version)
   cmds.call()
   flow.gitResetBranch()

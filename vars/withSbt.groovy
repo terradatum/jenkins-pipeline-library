@@ -27,10 +27,10 @@ def call(body) {
     withSbtEnv {
       // the following line shouldn't be necessary, as the sbt-extras file should take care if
       // envVars = ["JAVA_OPTS=-Xmx1536m -Xms512m", "SBT_OPTS=-Xmx1536m -Xms512m"]
+      sbtNameParts = sbtName.tokenize("-") // can be any of sbt-X.Y.Z
       jdkToolName = jdkName
-      sbtToolName = sbtName
       envVars = environment
-      sbtToolVersion = Version.valueOf(sbtName.tokenize("-")[1])
+      sbtToolVersion = Version.valueOf(sbtNameParts[1]) // X.Y.Z
       // Actually run SBT!
       // The ivy cache will be placed one directory above the workspace... which should put it in the
       // github "repo branches" directory - this hopefully allows different branches to share the same
