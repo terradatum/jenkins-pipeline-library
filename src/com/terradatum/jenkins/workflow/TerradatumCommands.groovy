@@ -64,7 +64,7 @@ def getNexusVersions(String repo, String artifact) {
 
 def getMaxNexusVersion(String repo, String project, String artifact, Version version) {
   lock("${project}/maxNexusVersion") {
-    List<Node> nexusVersions = getNexusVersions(repo, artifact).version
+    List<Node> nexusVersions = getNexusVersions(repo, artifact).version.toList()
     List<Version> versions = new ArrayList<>()
     for (int i = 0; i < nexusVersions.size(); i++) {
       Node nexusVersionNode = nexusVersions[i]
