@@ -4,9 +4,8 @@ package com.terradatum.jenkins.workflow
 import com.cloudbees.groovy.cps.NonCPS
 import groovy.json.JsonSlurper
 import groovy.json.internal.LazyMap
-import groovy.util.slurpersupport.Node
+import groovy.util.slurpersupport.NodeChild
 import jenkins.model.Jenkins
-
 /*
  * version processing
  */
@@ -64,10 +63,10 @@ def getNexusVersions(String repo, String artifact) {
 
 def getMaxNexusVersion(String repo, String project, String artifact, Version version) {
   lock("${project}/maxNexusVersion") {
-    List<Node> nexusVersions = getNexusVersions(repo, artifact).version.toList()
+    List<NodeChild> nexusVersions = getNexusVersions(repo, artifact).version.toList()
     List<Version> versions = new ArrayList<>()
     for (int i = 0; i < nexusVersions.size(); i++) {
-      Node nexusVersionNode = nexusVersions[i]
+      NodeChild nexusVersionNode = nexusVersions[i]
       try {
         if (nexusVersionNode) {
           def nexusVersion = Version.valueOf(nexusVersionNode.text())
