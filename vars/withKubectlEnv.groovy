@@ -24,7 +24,6 @@ def call(body) {
   if (envVars) {
     kubectlEnv.addAll(envVars)
   }
-  kubectlEnv.addAll(env)
 
   // Invoke the body closure we're passed within the environment we've created.
   withEnv(kubectlEnv) {

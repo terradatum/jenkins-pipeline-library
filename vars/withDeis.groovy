@@ -10,12 +10,12 @@ def call(body) {
   body()
 
   String args = config.args
-  List environment = config.environment
+  List deisEnv = config.deisEnv
 
   timeout(time: 180, unit: 'MINUTES') {
     //noinspection GroovyAssignabilityCheck
     withKubectlEnv {
-      envVars = environment
+      envVars = deisEnv
       deis = {
         configFileProvider([configFile(fileId: '7dcedacc-d280-4d68-b98f-d6a20fd40c67', targetLocation: "${pwd()}/../.kube/config")]) {
           withCredentials([
