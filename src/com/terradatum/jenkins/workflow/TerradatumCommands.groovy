@@ -27,13 +27,13 @@ import jenkins.model.Jenkins
  * And then add them to the module as 'Maven' libraries.
  */
 
-static def String getPathFromJenkinsFullName(String fullName) {
+static String getPathFromJenkinsFullName(String fullName) {
   Jenkins.instance.getItemByFullName(fullName).rootDir
 }
 
 def removeTrailingSlash(String myString) {
   if (myString.endsWith("/")) {
-    return myString.substring(0, myString.length() - 1);
+    return myString.substring(0, myString.length() - 1)
   }
   return myString
 }
@@ -232,7 +232,7 @@ def updatePackageJsonSnapshotWithVersion(Version version) {
   }
 }
 
-def void triggerDownstreamBuild(List<String> projectPaths) {
+void triggerDownstreamBuild(List<String> projectPaths) {
   // The pattern to look for when deciding which downstream build to skip: >>>!aergo-common!<<<
   String skipPattern = />>>!([a-zA-Z\-]*)!<<</
   // Look commit log for the last pull - back no further! If any of the commit messages contain the "skip" pattern, then
@@ -259,21 +259,21 @@ ${pullLog}"""
   }
 }
 
-def void gitMerge(String targetBranch, String sourceBranch) {
+void gitMerge(String targetBranch, String sourceBranch) {
   sshagent(['devops_deploy_DEV']) {
     shell "git checkout ${targetBranch}"
     shell "git merge origin/${sourceBranch}"
   }
 }
 
-def void gitConfig(String project) {
+void gitConfig(String project) {
   shell 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
   shell 'git config user.email sysadmin@terradatum.com'
   shell 'git config user.name terradatum-automation'
   shell "git remote set-url origin git@github.com:${project}"
 }
 
-def void gitTag(Version releaseVersion) {
+void gitTag(Version releaseVersion) {
   sshagent(['devops_deploy_DEV']) {
     shell 'git tag -d \$(git tag)'
     shell 'git fetch --tags'
@@ -282,34 +282,34 @@ def void gitTag(Version releaseVersion) {
   }
 }
 
-def void gitPush(String targetBranch) {
+void gitPush(String targetBranch) {
   sshagent(['devops_deploy_DEV']) {
     shell "git push origin ${targetBranch}"
     shell "git push --tags"
   }
 }
 
-def void gitCheckout(String targetBranch) {
+void gitCheckout(String targetBranch) {
   sshagent(['devops_deploy_DEV']) {
     shell "git checkout ${targetBranch}"
     shell 'git pull'
   }
 }
 
-def void gitResetBranch() {
+void gitResetBranch() {
   shell 'git checkout -- .'
 }
 
-def String gitPullLog() {
+String gitPullLog() {
   pullLog = shell(returnStdout: true, script: 'git log ORIG_HEAD..').trim()
 }
 
-def void dockerLogin() {
+void dockerLogin() {
   String dockerLogin = shell(returnStdout: true, script: 'aws ecr get-login --region us-west-1').trim()
   shell "sudo ${dockerLogin}"
 }
 
-def String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
+String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
   if (sourceFile != '' && fileExists(sourceFile)) {
     echo "Sourcing ${sourceFile} in bash script..."
     sh(
@@ -332,7 +332,7 @@ def String shell(String script, String sourceFile = '', String encoding = 'UTF-8
  * NonCPS - non-serializable methods
  */
 // read full text from file
-def String shell(Map args) {
+String shell(Map args) {
   String script = ''
   String sourceFile = ''
   String encoding = 'UTF-8'
@@ -358,20 +358,20 @@ def String shell(Map args) {
 
 // overwrite file with text
 @NonCPS
-static def String getStringInFile(String path) {
+static String getStringInFile(String path) {
   def file = new File(path)
   file.exists() ? file.text : ''
 }
 
 @NonCPS
-static def void setStringInFile(String path, String value) {
+static void setStringInFile(String path, String value) {
   new File(path).newWriter().withWriter { w ->
     w << value
   }
 }
 
 @NonCPS
-static def HashMap parseJsonText(String jsonText) {
+static HashMap parseJsonText(String jsonText) {
   return new HashMap<>(new JsonSlurper().parseText(jsonText) as LazyMap)
 }
 
