@@ -10,6 +10,7 @@ def call(body) {
   body()
 
   List envVars = config.envVars
+  Closure deis = config.deis
 
   // Using the "tool" Workflow call automatically installs those tools on the
   // node.
