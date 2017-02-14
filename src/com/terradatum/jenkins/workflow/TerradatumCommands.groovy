@@ -310,7 +310,7 @@ void dockerLogin() {
 }
 
 void deisLogin(String controller, String username, String password) {
-  shell "deis login ${controller} --username=${username} --password=${password}"
+  shell (returnStdout: true, script: "deis login ${controller} --username=${username} --password=${password}")
 }
 
 def getEcrPassword() {
