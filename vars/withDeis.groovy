@@ -33,10 +33,7 @@ def call(body) {
         ]) {
 
           wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-
             flow.deisLogin(controller, username, password)
-
-            args = "login ${controller} --username=${env.USERNAME} --password=${env.PASSWORD}"
             shell "deis ${args}"
           }
         }
