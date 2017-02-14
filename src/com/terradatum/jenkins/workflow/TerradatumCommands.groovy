@@ -310,11 +310,11 @@ void dockerLogin() {
 }
 
 void deisLogin(String controller, String username, String password) {
-  shell (returnStdout: true, script: "deis login ${controller} --username=${username} --password=${password}")
+  shell "deis login ${controller} --username=${username} --password=${password}"
 }
 
 def getEcrPassword() {
-  def ecrResponse = shell "aws ecr get-login --region us-west-1"
+  def ecrResponse = shell(returnStdout: true, script: "aws ecr get-login --region us-west-1")
   def ecrSplit = ecrResponse.split(/\s+/)
   ecrSplit[5]
 }
