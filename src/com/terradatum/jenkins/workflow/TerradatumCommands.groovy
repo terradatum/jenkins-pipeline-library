@@ -309,6 +309,10 @@ void dockerLogin() {
   shell "sudo ${dockerLogin}"
 }
 
+void deisLogin(String controller, String username, String password) {
+  shell "deis login ${controller} --username=${username} --password=${password}"
+}
+
 String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
   if (sourceFile != '' && fileExists(sourceFile)) {
     echo "Sourcing ${sourceFile} in bash script..."
