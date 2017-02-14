@@ -313,6 +313,19 @@ void deisLogin(String controller, String username, String password) {
   shell "deis login ${controller} --username=${username} --password=${password}"
 }
 
+def getEcrPassword() {
+  def ecrResponse = shell "aws ecr get-login --region us-west-1"
+  def ecrSplit = ecrResponse.split(/\s+/)
+  ecrSplit[5]
+}
+
+/*
+ * Expects for the deis environment to have been configured properly before execution
+ */
+void deisAppRegistry(String app) {
+  shell "deis registry:set -a $app username=AWS password=${getEcrPassword()}"
+}
+
 String shell(String script, String sourceFile = '', String encoding = 'UTF-8', boolean returnStatus = false, boolean returnStdout = false) {
   if (sourceFile != '' && fileExists(sourceFile)) {
     echo "Sourcing ${sourceFile} in bash script..."

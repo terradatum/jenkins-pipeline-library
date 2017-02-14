@@ -16,6 +16,7 @@ def call(body) {
   String controller = config.controller
   String username = config.username
   String password = config.password
+  String app = config.app
 
   String args = config.args
   List deisEnv = config.deisEnv
@@ -34,6 +35,7 @@ def call(body) {
         ]) {
           wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
             flow.deisLogin(controller, username, password)
+            flow.deisAppRegistry(app)
             shell "deis ${args}"
           }
         }
