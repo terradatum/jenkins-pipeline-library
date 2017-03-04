@@ -12,7 +12,6 @@
     <orderEntry type="library" name="org.6wind.jenkins:lockable-resources:1.10" level="project" />
     <orderEntry type="library" name="org.jenkins-ci.plugins.workflow:workflow-api:2.1" level="project" />
     <orderEntry type="library" name="com.github.zafarkhaja:java-semver:0.10-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="groovy-2.4.7" level="application" />
     <orderEntry type="module-library">
       <library name="Grab:java-semver-0.10-SNAPSHOT.jar">
         <CLASSES>
@@ -22,5 +21,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="groovy-2.4.x" level="application" />
   </component>
 </module>

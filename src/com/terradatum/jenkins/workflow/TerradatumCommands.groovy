@@ -157,7 +157,7 @@ def getTagVersion(Version version) {
 
   // if the repo has no tags this command will fail
   // if this command fails, and there is no config version, rethrow the error
-  gitVersion = shell(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
+  def tag = shell(returnStdout: true, script: 'git tag --sort version:refname | tail -1').trim()
 
   if (tag == null || tag.size() == 0) {
     echo "No existing tag found. Using version: ${version}"
