@@ -135,9 +135,18 @@ def getProjectVersionString(ProjectType projectType) {
       break
     case ProjectType.Sbt:
       def sbt = readFile 'build.sbt'
-      def matcher = sbt =~ /version\s*:=\s*"([0-9A-Za-z.-]+)",?/
-      //noinspection GroovyAssignabilityCheck
-      versionString = matcher[0][1]
+      def sbtMatcher = sbt =~ /version\s*:=\s*"([0-9A-Za-z.-]+)",?/
+      versionString = sbtMatcher ? sbtMatcher[0][1] : null
+      //noinspection GroovyUnusedAssignment
+      sbtMatcher = null
+      if (versionString == null) {
+        def common = readFile 'project/Common.scala'
+        def commonMatcher = common =~ /version\s*:=\s*"([0-9A-Za-z.-]+)",?/
+        versionString = commonMatcher ? commonMatcher[0][1] : null
+        //noinspection GroovyUnusedAssignment
+        commonMatcher = null
+      }
+      //echo "versionString: $versionString"
       break
     case ProjectType.Node:
       //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
