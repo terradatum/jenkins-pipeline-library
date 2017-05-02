@@ -211,9 +211,9 @@ def updateSbtDependencies(String projectPart) {
 def updateBuildSbtSnapshotToVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
-      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
+      shell "find . -type f \\( -name 'build.sbt' -o -name 'Common.scala' \\) -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\\+${version.buildMetadata}\"/g' \"{}\" \\;"
     } else {
-      shell "find . -type f -name 'build.sbt' -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
+      shell "find . -type f \\( -name 'build.sbt' -o -name 'Common.scala' \\) -exec sed -i -r 's/(version[ \\t]*:=[ \\t]*\"[0-9.]+)[0-9]-SNAPSHOT\"/\\1${version.patchVersion}\"/g' \"{}\" \\;"
     }
   }
 }
