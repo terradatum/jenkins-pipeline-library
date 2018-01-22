@@ -270,9 +270,9 @@ ${pullLog}"""
 
 void gitMerge(String targetBranch, String sourceBranch) {
   sshagent(['devops_deploy_DEV']) {
-    shell 'git fetch --all'
+    shell "git fetch --progress +refs/heads/${targetBranch}:refs/remotes/origin/${targetBranch}"
     shell "git checkout ${targetBranch}"
-    shell "git merge origin/${sourceBranch}"
+    shell "git merge ${sourceBranch}"
   }
 }
 
@@ -294,7 +294,7 @@ void gitTag(Version releaseVersion) {
 
 void gitPush(String targetBranch) {
   sshagent(['devops_deploy_DEV']) {
-    shell "git push origin ${targetBranch}"
+    shell "git push --set-upstream origin ${targetBranch}"
     shell "git push --tags"
   }
 }
