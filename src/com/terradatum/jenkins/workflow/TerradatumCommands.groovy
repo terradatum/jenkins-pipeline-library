@@ -270,6 +270,7 @@ ${pullLog}"""
 
 void gitMerge(String targetBranch, String sourceBranch) {
   sshagent(['devops_deploy_DEV']) {
+    shell 'get fetch --all'
     shell "git checkout ${targetBranch}"
     shell "git merge origin/${sourceBranch}"
   }
