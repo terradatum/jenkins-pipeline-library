@@ -279,7 +279,7 @@ void gitMerge(String targetBranch, String sourceBranch) {
 void gitConfig(String project) {
   githubSshConfig = """Host github.com
       |  IdentityFile ~/.ssh/id_rsa
-      |  StrictHostNameChecking no
+      |  StrictHostKeyChecking no
       |  UserKnownHostsFile /dev/null
   """.stripMargin()
   sshConfig = readFile '~/.ssh/config'
