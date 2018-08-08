@@ -277,6 +277,18 @@ void gitMerge(String targetBranch, String sourceBranch) {
 }
 
 void gitConfig(String project) {
+  githubSshConfig = """Host github.com
+      |  IdentityFile ~/.ssh/id_rsa
+      |  StrictHostNameChecking no
+      |  UserKnownHostsFile /dev/null
+  """.stripMargin()
+  sshConfig = readFile '~/.ssh/config'
+  githubSshConfigMatcher = sshConfig ~ /(?gsm)(?<=^)(\S.*?)(?=^\S|\Z)/
+  if (githubSshConfigMatcher.matches()) {
+    if (!githubSshConfigMatcher[0].contains(githubSshConfig)) {
+      setStringInFile('~/.ssh/config', githubSshConfig)
+    }
+  }
   shell 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
   shell 'git config user.email sysadmin@terradatum.com'
   shell 'git config user.name terradatum-automation'
