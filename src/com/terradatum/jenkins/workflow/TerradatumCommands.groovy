@@ -289,7 +289,6 @@ void gitConfig(String project) {
       setStringInFile('~/.ssh/config', githubSshConfig)
     }
   }
-  shell 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
   shell 'git config user.email sysadmin@terradatum.com'
   shell 'git config user.name terradatum-automation'
   shell "git remote set-url origin git@github.com:${project}"
