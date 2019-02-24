@@ -36,7 +36,7 @@ def call(body) {
       mvn = {
         configFileProvider([configFile(fileId: 'a451ec64-34b3-4ebc-9678-0198a2a130d5', targetLocation: "${pwd()}/../.m2/settings.xml"),
                             configFile(fileId: 'b11f72aa-0f16-4595-b62b-d4cf7cf824aa', targetLocation: "${pwd()}/../.m2/settings-security.xml")]) {
-          shell "mvn -s ${pwd()}/../.m2/settings.xml -V -U -B -Dmaven.repo.local=${pwd()}/../.m2/repository ${args}"
+          shell "mvn -s ${pwd()}/../.m2/settings.xml -Dsettings.security=${pwd()}/../.m2/settings.xml -V -U -B -Dmaven.repo.local=${pwd()}/../.m2/repository ${args}"
         }
       }
     }
