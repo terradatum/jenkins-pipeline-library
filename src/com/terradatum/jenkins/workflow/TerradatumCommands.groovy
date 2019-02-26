@@ -408,4 +408,12 @@ static HashMap parseJsonText(String jsonText) {
   return new HashMap<>(new JsonSlurper().parseText(jsonText) as LazyMap)
 }
 
+@NonCPS
+def lastSuccessfulBuild(build) {
+  if ((build != null) && (build.result != 'SUCCESS')) {
+    lastSuccessfulBuild(build.getPreviousBuild())
+  }
+  return build;
+}
+
 return this
