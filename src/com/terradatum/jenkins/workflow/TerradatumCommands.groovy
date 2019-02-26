@@ -5,6 +5,7 @@ import com.cloudbees.groovy.cps.NonCPS
 import groovy.json.JsonSlurper
 import groovy.json.internal.LazyMap
 import groovy.util.slurpersupport.NodeChild
+import hudson.model.Build
 import jenkins.model.Jenkins
 /*
  * version processing
@@ -201,6 +202,11 @@ def setCurrentVersion(String project, Version version) {
   lock("${project}/currentVersion") {
     setStringInFile(path, persistedVersion.toString())
   }
+}
+
+static def getLastSuccessfulBuildVersion(Build build) {
+  def successfulBuildVersion = new Version(lastSuccessfulBuild(build).displayName.toString())
+  successfulBuildVersion
 }
 
 def updatePomXmlRevisionWithVersion(Version version) {
@@ -409,11 +415,11 @@ static HashMap parseJsonText(String jsonText) {
 }
 
 @NonCPS
-def lastSuccessfulBuild(build) {
+static lastSuccessfulBuild(build) {
   if ((build != null) && (build.result != 'SUCCESS')) {
     lastSuccessfulBuild(build.getPreviousBuild())
   }
-  return build;
+  build;
 }
 
 return this
