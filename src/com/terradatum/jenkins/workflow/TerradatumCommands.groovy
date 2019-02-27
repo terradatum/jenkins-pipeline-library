@@ -204,17 +204,6 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
-def getLastSuccessfulBuildVersion(build) {
-  Version successfulBuildVersion
-  try {
-    successfulBuildVersion = new Version(lastSuccessfulBuild(build).displayName.toString())
-  } catch (e) {
-    echo "Probably a warning:\n${e.getMessage()}"
-    successfulBuildVersion = new Version('0.0.1')
-  }
-  successfulBuildVersion
-}
-
 def updatePomXmlRevisionWithVersion(Version version) {
   if (version) {
     if (version.buildMetadata) {
@@ -418,14 +407,6 @@ static void setStringInFile(String path, String value) {
 @NonCPS
 static HashMap parseJsonText(String jsonText) {
   return new HashMap<>(new JsonSlurper().parseText(jsonText) as LazyMap)
-}
-
-@NonCPS
-static lastSuccessfulBuild(build) {
-  if ((build != null) && (build.result != 'SUCCESS')) {
-    lastSuccessfulBuild(build.getPreviousBuild())
-  }
-  build;
 }
 
 return this
