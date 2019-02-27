@@ -204,7 +204,7 @@ def setCurrentVersion(String project, Version version) {
   }
 }
 
-static def getLastSuccessfulBuildVersion(build) {
+def getLastSuccessfulBuildVersion(build) {
   Version successfulBuildVersion
   try {
     successfulBuildVersion = new Version(lastSuccessfulBuild(build).displayName.toString())
