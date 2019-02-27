@@ -205,7 +205,13 @@ def setCurrentVersion(String project, Version version) {
 }
 
 static def getLastSuccessfulBuildVersion(build) {
-  def successfulBuildVersion = new Version(lastSuccessfulBuild(build).displayName.toString())
+  Version successfulBuildVersion
+  try {
+    successfulBuildVersion = new Version(lastSuccessfulBuild(build).displayName.toString())
+  } catch (e) {
+    echo "Probably a warning:\n${e.getMessage()}"
+    successfulBuildVersion = new Version('0.0.1')
+  }
   successfulBuildVersion
 }
 
